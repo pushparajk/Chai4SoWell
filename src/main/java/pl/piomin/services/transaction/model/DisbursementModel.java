@@ -1,29 +1,44 @@
 package pl.piomin.services.transaction.model;
 
 public class DisbursementModel {
-	private String centralAddress; 
-	private int stateId;
-	private int disbursementAmount;
-	private int returnedAmount;
-	private String stateContractAddress;
+
+	String identificationNumber;
+	String bankCode;
+	String accountNumber;
+	int disbursementAmount;
+	int stateId;
+	String disbursementAddress;
 	
+	public String getDisbursementAddress() {
+		return disbursementAddress;
+	}
+	public void setDisbursementAddress(String disbursementAddress) {
+		this.disbursementAddress = disbursementAddress;
+	}
+	String stateContractAddress;
 	public String getStateContractAddress() {
 		return stateContractAddress;
 	}
 	public void setStateContractAddress(String stateContractAddress) {
 		this.stateContractAddress = stateContractAddress;
 	}
-	public String getCentralAddress() {
-		return centralAddress;
+	public String getIdentificationNumber() {
+		return identificationNumber;
 	}
-	public void setCentralAddress(String address) {
-		this.centralAddress = address;
+	public void setIdentificationNumber(String identificationNumber) {
+		this.identificationNumber = identificationNumber;
 	}
-	public int getStateId() {
-		return stateId;
+	public String getBankCode() {
+		return bankCode;
 	}
-	public void setStateId(int stateId) {
-		this.stateId = stateId;
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 	public int getDisbursementAmount() {
 		return disbursementAmount;
@@ -32,11 +47,10 @@ public class DisbursementModel {
 		this.disbursementAmount = disbursementAmount;
 	}
 
-	public int getReturnedAmount() {
-		return returnedAmount;
+	public int getStateId() {
+		return stateId;
 	}
-	public void setReturnedAmount(int returnedAmount) {
-		this.returnedAmount = returnedAmount;
+	public void setStateId(int stateId) {
+		this.stateId = stateId;
 	}
-
 }
