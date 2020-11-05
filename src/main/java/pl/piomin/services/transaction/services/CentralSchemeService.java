@@ -46,7 +46,9 @@ import org.web3j.tx.gas.DefaultGasProvider;
 import pl.piomin.services.transaction.controller.CentralContractController;
 import pl.piomin.services.transaction.model.CentralContract;
 import pl.piomin.services.transaction.model.Contract;
+import pl.piomin.services.transaction.model.DisbursementContract;
 import pl.piomin.services.transaction.model.DisbursementModel;
+import pl.piomin.services.transaction.model.FundAllocationModel;
 import pl.piomin.services.transaction.model.StateContract;
 
 @Service
@@ -107,19 +109,6 @@ public class CentralSchemeService {
 		System.out.println("Inside getSchemeName address = "+address);
 		String schemeName=null;
 		try {
-		/*//File fileJson=new File("C:\\Users\\720214\\OneDrive - Finastra\\Finastra\\Innovation\\BlockChain\\blockchain-transaction\\transaction-service\\UTC--2020-11-02T12-00-44.713730700Z--8fe810dc14161a14704e1374fff6c33e0b63217d.json");
-    	String file = WalletUtils.generateLightNewWalletFile(PASSWORD, null);
-    	Credentials credentialsRead = WalletUtils.loadCredentials(PASSWORD, file);
-    	//Credentials credentialsRead = WalletUtils.loadCredentials(PASSWORD, fileJson);
-    	LOGGER.info("Credentials created: file={}, address={}", file, credentialsRead.getAddress());
-    	EthCoinbase coinbase = web3j.ethCoinbase().send();
-		EthGetTransactionCount transactionCount = web3j.ethGetTransactionCount(coinbase.getAddress(), DefaultBlockParameterName.LATEST).send();
-        Transaction transaction = Transaction.createEtherTransaction(coinbase.getAddress(), transactionCount.getTransactionCount(), GAS_PRICE, GAS_LIMIT, credentialsRead.getAddress(), BigInteger.valueOf(250_000_000_000_000L));
-        web3j.ethSendTransaction(transaction).send();
-        EthGetBalance balance1 = web3j.ethGetBalance(credentialsRead.getAddress(), DefaultBlockParameterName.LATEST).send();
-        System.out.println("Balance after transfer: {}"+balance1.getBalance().longValue());
-		*/
-		//CentralContract actualContract=CentralContract.load(address, web3j, credentialsRead , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			CentralContract actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 		
 		
@@ -133,10 +122,6 @@ public class CentralSchemeService {
 			System.out.println("Returned Amount for state 33  = "+schemeAmount.intValue());
 			schemeAmount = actualContract.getDisbursementAmount(BigInteger.valueOf(33)).send();
 			System.out.println("Sanctioned Amount for state 33  = "+schemeAmount.intValue());
-	    	//TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-			//TransactionReceipt transactionReceipt = actualContract.setSchemeAmount(BigInteger.valueOf(1000)).send();
-					//disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-	    	
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -152,19 +137,6 @@ public class CentralSchemeService {
 		CentralContract actualContract;
 		BigInteger schemeAmount=null;
 		try {
-		/* //File fileJson=new File("C:\\Users\\720214\\OneDrive - Finastra\\Finastra\\Innovation\\BlockChain\\blockchain-transaction\\transaction-service\\UTC--2020-11-02T12-00-44.713730700Z--8fe810dc14161a14704e1374fff6c33e0b63217d.json");
-    	String file = WalletUtils.generateLightNewWalletFile(PASSWORD, null);
-    	Credentials credentialsRead = WalletUtils.loadCredentials(PASSWORD, file);
-    	//Credentials credentialsRead = WalletUtils.loadCredentials(PASSWORD, fileJson);
-    	LOGGER.info("Credentials created: file={}, address={}", file, credentialsRead.getAddress());
-    	EthCoinbase coinbase = web3j.ethCoinbase().send();
-		EthGetTransactionCount transactionCount = web3j.ethGetTransactionCount(coinbase.getAddress(), DefaultBlockParameterName.LATEST).send();
-        Transaction transaction = Transaction.createEtherTransaction(coinbase.getAddress(), transactionCount.getTransactionCount(), GAS_PRICE, GAS_LIMIT, credentialsRead.getAddress(), BigInteger.valueOf(250_000_000_000_000L));
-        web3j.ethSendTransaction(transaction).send();
-        EthGetBalance balance1 = web3j.ethGetBalance(credentialsRead.getAddress(), DefaultBlockParameterName.LATEST).send();
-        System.out.println("Balance after transfer: {}"+balance1.getBalance().longValue());
-		*/
-		//CentralContract actualContract=CentralContract.load(address, web3j, credentialsRead , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			 schemeAmount=actualContract.getSchemeAmount().send();
 		}catch(Exception e) {
@@ -193,40 +165,34 @@ public class CentralSchemeService {
 			
 			
 				System.out.println("Returned balanceAmount for state 33  = "+balanceAmount);
-				//schemeAmount = actualContract.getDisbursementAmount(BigInteger.valueOf(33)).send();
-				//System.out.println("Sanctioned Amount for state 33  = "+schemeAmount.intValue());
-		    	//TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-				//TransactionReceipt transactionReceipt = actualContract.setSchemeAmount(BigInteger.valueOf(1000)).send();
-						//disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-		    	
 			return balanceAmount;
 		}
 
-		public DisbursementModel getdisburseAmountToState(DisbursementModel newDisbursementModel) {
+		public FundAllocationModel getdisburseAmountToState(FundAllocationModel newFundAllocationModel) {
 			// TODO Auto-generated method stub
-			String address=newDisbursementModel.getCentralAddress();
-			int stateId=newDisbursementModel.getStateId();
+			String address=newFundAllocationModel.getCentralAddress();
+			int stateId=newFundAllocationModel.getStateId();
 			System.out.println("Inside getSchemeAmount address = "+address);
 			CentralContract actualContract=null;
 			int balanceAmount=0;
 			try {
 				 actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
   			     balanceAmount = actualContract.getDisbursementAmount(BigInteger.valueOf(stateId)).send().intValue();
-  			     newDisbursementModel.setDisbursementAmount(balanceAmount);
+  			     newFundAllocationModel.setSanctionedAmount(balanceAmount);
 			}catch(Exception e) {
 				e.printStackTrace();
 				
 			}			
 				System.out.println("Returned balanceAmount for state 33  = "+balanceAmount);
-			return newDisbursementModel;
+			return newFundAllocationModel;
 		}
 		
-			public DisbursementModel disburseAmountToState(DisbursementModel newDisbursementModel ) {
+			public FundAllocationModel disburseAmountToState(FundAllocationModel newFundAllocationModel ) {
 				// TODO Auto-generated method stub
-				String address=newDisbursementModel.getCentralAddress();
-				int stateId=newDisbursementModel.getStateId();
-				int disbursementAmount=newDisbursementModel.getDisbursementAmount();
-				System.out.println("Inside getSchemeAmount address = "+address);
+				String address=newFundAllocationModel.getCentralAddress();
+				int stateId=newFundAllocationModel.getStateId();
+				int disbursementAmount=newFundAllocationModel.getSanctionedAmount();
+				System.out.println("Inside disburseAmountToState address = "+address);
 				CentralContract actualContract;
 				boolean status=true;
 				try {
@@ -235,8 +201,8 @@ public class CentralSchemeService {
 				//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
 				String schemeName=actualContract.getSchemeName().send();
 				StateContract stateContract= StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), schemeName, BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
-				System.out.println("stateContract.isValid() = "+stateContract.isValid());
-				System.out.println("stateContract address = "+stateContract.getContractAddress());
+				newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
+				newFundAllocationModel.setCentralAddress(address);
 				}catch(Exception e) {
 					e.printStackTrace();
 					status=false;
@@ -244,12 +210,39 @@ public class CentralSchemeService {
 				
 					//TransactionReceipt transactionReceipt = actualContract.setSchemeAmount(BigInteger.valueOf(1000)).send();
 			    	//disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-			    return newDisbursementModel;
+			    return newFundAllocationModel;
 			}
 
+			public FundAllocationModel disburseToBeneficiary(FundAllocationModel newFundAllocationModel ) {
+				// TODO Auto-generated method stub
+				String address=newFundAllocationModel.getStateContractAddress();
+				int stateId=newFundAllocationModel.getStateId();
+				int disbursementAmount=newFundAllocationModel.getSanctionedAmount();
+				System.out.println("Inside disburseAmountToState address = "+address);
+				CentralContract actualContract;
+				boolean status=true;
+				try {
+					 actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+					 TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
+				//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
+				String schemeName=actualContract.getSchemeName().send();
+				StateContract stateContract= StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), schemeName, BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
+				}catch(Exception e) {
+					e.printStackTrace();
+					status=false;
+				}
+				
+					//TransactionReceipt transactionReceipt = actualContract.setSchemeAmount(BigInteger.valueOf(1000)).send();
+			    	//disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
+			    return newFundAllocationModel;
+			}
+
+			
 			public DisbursementModel disburseAmountToIndividual(DisbursementModel newDisbursementModel) {
 				String stateAddress=newDisbursementModel.getStateContractAddress();
-				int stateId=newDisbursementModel.getStateId();
+				String bankCode=newDisbursementModel.getBankCode();
+				String accountNumber=newDisbursementModel.getAccountNumber();
+				String identificationNumber=newDisbursementModel.getIdentificationNumber();
 				int disbursementAmount=newDisbursementModel.getDisbursementAmount();
 				// TODO Auto-generated method stub
 				System.out.println("Inside disburseAmountToIndividual address = "+stateAddress);
@@ -260,21 +253,25 @@ public class CentralSchemeService {
 					System.out.println("stateContract = "+stateContract.isValid());
 					TransactionReceipt transactionReceipt =stateContract.disburseAmountToIndividual(BigInteger.valueOf(disbursementAmount)).send();
 					System.out.println("transactionReceipt inside disburseAmountToIndividual = "+transactionReceipt.isStatusOK());	
+					DisbursementContract disbursementContract = DisbursementContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),stateAddress,identificationNumber,bankCode,accountNumber,BigInteger.valueOf(disbursementAmount)).send();
+					System.out.println("disbursementContract is valid ="+disbursementContract.isValid());
+					System.out.println("disbursementContract  address ="+disbursementContract.getContractAddress());
+					newDisbursementModel.setDisbursementAddress(disbursementContract.getContractAddress());
 					/* Later add the code for deploying the individual disbursement contract */
 				}catch(Exception e) {
 					e.printStackTrace();
 					status=false;
 				}
-				newDisbursementModel.setStateContractAddress(stateAddress);
+				
 			    return newDisbursementModel;	
 			}
 
 			
 			
-				public DisbursementModel reverseBalanceAmountFromState(DisbursementModel newDisbursementModel) {
-					String address=newDisbursementModel.getCentralAddress();
-					int stateId=newDisbursementModel.getStateId();
-					int disbursementAmount=newDisbursementModel.getDisbursementAmount();
+				public FundAllocationModel reverseBalanceAmountFromState(FundAllocationModel newFundAllocationModel) {
+					String address=newFundAllocationModel.getCentralAddress();
+					int stateId=newFundAllocationModel.getStateId();
+					int disbursementAmount=newFundAllocationModel.getSanctionedAmount();
 					// TODO Auto-generated method stub
 					System.out.println("Inside getSchemeAmount address = "+address);
 					boolean status=true;
@@ -288,27 +285,79 @@ public class CentralSchemeService {
 					}
 						//TransactionReceipt transactionReceipt = actualContract.setSchemeAmount(BigInteger.valueOf(1000)).send();
 								//disburseAmountToState(BigInteger.valueOf(33), BigInteger.valueOf(1000)).send();
-				    return newDisbursementModel;	
+				    return newFundAllocationModel;	
 				}
 
-		public DisbursementModel getReverseBalanceAmountFromState(DisbursementModel newDisbursementModel) {
+		public FundAllocationModel getReverseBalanceAmountFromState(FundAllocationModel newFundAllocationModel) {
 			// TODO Auto-generated method stub
-			String address=newDisbursementModel.getCentralAddress();
-			int stateId=newDisbursementModel.getStateId();
+			String address=newFundAllocationModel.getCentralAddress();
+			int stateId=newFundAllocationModel.getStateId();
 			System.out.println("Inside getSchemeAmount address = "+address);
 			CentralContract actualContract=null;
 			int balanceAmount=0;
 			try {
 				 actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
   			     balanceAmount = actualContract.getBalanceAmount(BigInteger.valueOf(stateId)).send().intValue();
-  			     newDisbursementModel.setReturnedAmount(balanceAmount);
+  			     newFundAllocationModel.setReturnedAmount(balanceAmount);
 			}catch(Exception e) {
 				e.printStackTrace();
 				
 			}			
 				System.out.println("Returned balanceAmount for state   = "+balanceAmount);
-			return newDisbursementModel;
+			return newFundAllocationModel;
 		}
+		
+		public FundAllocationModel getStateSchemeDetails(FundAllocationModel newFundAllocationModel) {
+			// TODO Auto-generated method stub
+			String address=newFundAllocationModel.getStateContractAddress();
+			System.out.println("Inside getStateSchemeAmount address = "+address);
+			StateContract actualContract=null;
+			int balanceAmount=0;
+			try {
+				 actualContract=StateContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+				  balanceAmount = actualContract.getBalanceAmount().send().intValue();
+				  System.out.println("getStateSchemeAmount amount = "+balanceAmount);
+				  newFundAllocationModel.setReturnedAmount(balanceAmount);
+				  newFundAllocationModel.setSchemeName(actualContract.getSchemeName().send());
+				  newFundAllocationModel.setSanctionedAmount(actualContract.getSchemeSanctionedAmount().send().intValue());
+				  newFundAllocationModel.setStateId(actualContract.getStateId().send().intValue());
+				  System.out.println("actualContract.getcentralContractAddress().send() = "+actualContract.getcentralContractAddress().send());
+				  newFundAllocationModel.setCentralAddress(actualContract.getcentralContractAddress().send());
+
+			}catch(Exception e) {
+				e.printStackTrace();
+				
+			}			
+			return newFundAllocationModel;
+		}
+		
+		public FundAllocationModel setStateSchemeName(FundAllocationModel newFundAllocationModel) {
+			// TODO Auto-generated method stub
+			String address=newFundAllocationModel.getStateContractAddress();
+			System.out.println("Inside getStateSchemeAmount address = "+address);
+			StateContract actualContract=null;
+			int balanceAmount=0;
+			try {
+				 actualContract=StateContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+				  balanceAmount = actualContract.getBalanceAmount().send().intValue();
+				  System.out.println("getStateSchemeAmount amount = "+balanceAmount);
+				  newFundAllocationModel.setReturnedAmount(balanceAmount);
+				  newFundAllocationModel.setSchemeName(actualContract.getSchemeName().send());
+				  newFundAllocationModel.setSanctionedAmount(actualContract.getSchemeSanctionedAmount().send().intValue());
+				  newFundAllocationModel.setStateId(actualContract.getStateId().send().intValue());
+					
+					//System.out.println("Scheme Name = "+schemeDetails.get(0));
+					//System.out.println("schemeSanctionedAmount = "+schemeDetails.get(1));
+					//System.out.println("State ID = "+schemeDetails.get(2));
+
+			}catch(Exception e) {
+				e.printStackTrace();
+				
+			}			
+			return newFundAllocationModel;
+		}
+
+		
 		
 	public Contract createCentralScheme(Contract newContract) throws Exception  {
 		System.out.println("Inside createCentralScheme service.....");
@@ -356,6 +405,48 @@ public class CentralSchemeService {
     	}
     	return newContract;
 	
+	}
+
+	public Contract getCentralSchemeDetails(Contract contractModel) {
+		// TODO Auto-generated method stub
+		String centralContractAddress=contractModel.getCentralContractAddress();
+		try {
+			CentralContract actualContract=CentralContract.load(centralContractAddress, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			System.out.println("actualContract is valid = "+actualContract.isValid());
+			String schemeName=actualContract.getSchemeName().send();
+			int schemeAmount=actualContract.getSchemeAmount().send().intValue();
+			contractModel.setSchemeName(schemeName);
+			contractModel.setSchemeAmount(schemeAmount);
+		}catch(Exception e) {
+			e.printStackTrace();
+			
+		}			
+
+		return contractModel;
+	}
+
+	public DisbursementModel getDisbursementDetails(DisbursementModel newDisbursementModel) {
+		String disbursementContractAddress=newDisbursementModel.getDisbursementAddress();
+		try {
+			//CentralContract actualContract=CentralContract.load(disbursementContractAddress, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			DisbursementContract actualContract = DisbursementContract.load(disbursementContractAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L)); 
+			System.out.println("actualContract is valid = "+actualContract.isValid());
+			String stateContractAddress=actualContract.getStateContractAddress().send();
+			String identificationNumber=actualContract.getIdentificationNumber().send();
+			String bankCode=actualContract.getBankCode().send();
+			String accountNumber=actualContract.getAccountNumber().send();
+			int disbursementAmount=actualContract.getDisbursementAmount().send().intValue();
+			newDisbursementModel.setStateContractAddress(stateContractAddress);
+			newDisbursementModel.setIdentificationNumber(identificationNumber);
+			newDisbursementModel.setBankCode(bankCode);
+			newDisbursementModel.setAccountNumber(accountNumber);
+			newDisbursementModel.setDisbursementAmount(disbursementAmount);
+		}catch(Exception e) {
+			e.printStackTrace();
+			
+		}			
+
+		return newDisbursementModel;
 	}
 
 	
