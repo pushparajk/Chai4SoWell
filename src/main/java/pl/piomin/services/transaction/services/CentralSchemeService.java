@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,13 @@ import org.springframework.web.client.RestTemplate;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
+import org.web3j.abi.Utils;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.StaticArray2;
+import org.web3j.abi.datatypes.primitive.Byte;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
@@ -113,7 +119,7 @@ public class CentralSchemeService {
 		
 		
 			System.out.println("Is it valid "+actualContract.isValid());
-			schemeName=actualContract.getSchemeName().send();
+			schemeName=actualContract.getSchemeName().send().toString();
 			BigInteger schemeAmount=actualContract.getSchemeAmount().send();
 			System.out.println("schemeName = "+schemeName);
 			System.out.println("Scheme Amount  = "+schemeAmount.intValue());
@@ -199,7 +205,7 @@ public class CentralSchemeService {
 					 actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 					 TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
 				//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
-				String schemeName=actualContract.getSchemeName().send();
+				String schemeName=actualContract.getSchemeName().send().toString();
 				StateContract stateContract= StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), schemeName, BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
 				newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
 				newFundAllocationModel.setCentralAddress(address);
@@ -225,7 +231,7 @@ public class CentralSchemeService {
 					 actualContract=CentralContract.load(address, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 					 TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
 				//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
-				String schemeName=actualContract.getSchemeName().send();
+				String schemeName=actualContract.getSchemeName().send().toString();
 				StateContract stateContract= StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), schemeName, BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
 				}catch(Exception e) {
 					e.printStackTrace();
@@ -361,10 +367,21 @@ public class CentralSchemeService {
 		
 	public Contract createCentralScheme(Contract newContract) throws Exception  {
 		System.out.println("Inside createCentralScheme service.....");
+	    String accountNumber=newContract.getAccountNumber();
+		String accountName=newContract.getAccountName();
+		String bankCode=newContract.getBankcode();
+		String schemeName=newContract.getSchemeName();
+		int schemeAmount=newContract.getSchemeAmount();
+		
+		List<byte[]> inputParams=new ArrayList<>();
+		inputParams.add(stringToBytes32(schemeName).getValue());
+		inputParams.add(stringToBytes32(accountNumber).getValue());
+		inputParams.add(stringToBytes32(accountName).getValue());
+		inputParams.add(stringToBytes32(bankCode).getValue());
 		
     	System.out.println("credentials.getAddress() "+credentials.getAddress());
     	System.out.println("newContract.getSchemeName() = "+newContract.getSchemeName());
-    	System.out.println("newContract.getSchemeAmount()"+newContract.getSchemeAmount());
+    	System.out.println("newContract.getSchemeAmount()"+newContract.getSchemeAmount()+" "+accountNumber+" "+accountName+" "+bankCode);
     	//Transactionfee contract = Transactionfee.deploy(web3j, credentials, GAS_PRICE, GAS_LIMIT, receiverCredentials.getAddress(), BigInteger.valueOf(newContract.getFee())).send();
     	EthGetBalance balance = web3j.ethGetBalance(credentials.getAddress(), DefaultBlockParameterName.LATEST).send();
     	System.out.println("Balance before deploying the contract: {}"+balance.getBalance().longValue());
@@ -374,10 +391,11 @@ public class CentralSchemeService {
     	//System.out.println("From personalUnlockAccount.hasError() = "+personalUnlockAccount.getError().getMessage());
 
     	
-    	CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
-    	
+    	//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount()),accountNumber,accountName,bankCode).send();
+    	//CentralContract contract = CentralContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount()),accountName).send();
+    	CentralContract contract = CentralContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),inputParams,BigInteger.valueOf(schemeAmount)).send();
     	//CentralContract actualContract=CentralContract.load(contract.getContractAddress(), web3j, credentials , BigInteger.valueOf(521_000L), BigInteger.valueOf(521_000L));
-    	
+    	newContract.setCentralContractAddress(contract.getContractAddress());
     	
     	System.out.println("contract.isValid() = "+contract.isValid());
     	LOGGER.info("New contract deployed: address={}", contract.getContractAddress());    	
@@ -413,15 +431,25 @@ public class CentralSchemeService {
 		try {
 			CentralContract actualContract=CentralContract.load(centralContractAddress, web3j, credentials , BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			System.out.println("actualContract is valid = "+actualContract.isValid());
-			String schemeName=actualContract.getSchemeName().send();
+			//String schemeName=actualContract.getSchemeName().send().toString();
+			//String accountNumber=actualContract.getAccountNumber().send().toString();
+			//String accountName=actualContract.getAccountName().send().toString();
+			//String bankCode=actualContract.getBankcode().send().toString();
 			int schemeAmount=actualContract.getSchemeAmount().send().intValue();
+			String schemeName=StringUtils.newStringUsAscii(actualContract.getSchemeName().send().clone()).trim();
+			String accountNumber=StringUtils.newStringUsAscii(actualContract.getAccountNumber().send().clone()).trim();
+			String accountName=StringUtils.newStringUsAscii(actualContract.getAccountName().send().clone()).trim();
+			String bankCode=StringUtils.newStringUsAscii(actualContract.getBankcode().send().clone()).trim();
+			
 			contractModel.setSchemeName(schemeName);
 			contractModel.setSchemeAmount(schemeAmount);
+			contractModel.setAccountName(accountName);
+			contractModel.setAccountNumber(accountNumber);
+			contractModel.setBankcode(bankCode);
 		}catch(Exception e) {
 			e.printStackTrace();
 			
 		}			
-
 		return contractModel;
 	}
 
@@ -449,5 +477,11 @@ public class CentralSchemeService {
 		return newDisbursementModel;
 	}
 
+	public static Bytes32 stringToBytes32(String string) {
+        byte[] byteValue = string.getBytes();
+        byte[] byteValueLen32 = new byte[32];
+        System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
+        return new Bytes32(byteValueLen32);
+    }
 	
 }
