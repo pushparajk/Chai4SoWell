@@ -13,6 +13,7 @@ import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -38,13 +39,15 @@ import org.web3j.tx.gas.ContractGasProvider;
  */
 @SuppressWarnings("rawtypes")
 public class CentralContract extends Contract {
-    private static final String BINARY = "60c0604052600a60808190527f54657374536368656d650000000000000000000000000000000000000000000060a090815261003e91600091906100e2565b5061271060015534801561005157600080fd5b506040516105013803806105018339810180604052604081101561007457600080fd5b81019080805164010000000081111561008c57600080fd5b8201602081018481111561009f57600080fd5b81516401000000008111828201871017156100b957600080fd5b5050602091820151815191945092506100d891600091908501906100e2565b506001555061017d565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061012357805160ff1916838001178555610150565b82800160010185558215610150579182015b82811115610150578251825591602001919060010190610135565b5061015c929150610160565b5090565b61017a91905b8082111561015c5760008155600101610166565b90565b6103758061018c6000396000f3fe608060405234801561001057600080fd5b50600436106100a5576000357c01000000000000000000000000000000000000000000000000000000009004806375fb9c551161007857806375fb9c55146101525780638dd4fe421461016f5780639111e38114610177578063a178965014610194576100a5565b806328b449ac146100aa57806342124db6146100e15780635b98ef8814610110578063684d9b551461012d575b600080fd5b6100cd600480360360408110156100c057600080fd5b5080359060200135610211565b604080519115158252519081900360200190f35b6100fe600480360360208110156100f757600080fd5b5035610223565b60408051918252519081900360200190f35b6100fe6004803603602081101561012657600080fd5b5035610235565b6101506004803603604081101561014357600080fd5b5080359060200135610247565b005b6100fe6004803603602081101561016857600080fd5b5035610289565b6100fe61029b565b6100fe6004803603602081101561018d57600080fd5b50356102a1565b61019c6102b3565b6040805160208082528351818301528351919283929083019185019080838360005b838110156101d65781810151838201526020016101be565b50505050905090810190601f1680156102035780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b60009182526004602052604082205590565b60046020526000908152604090205481565b60036020526000908152604090205481565b60028054600181019091557f405787fa12a823e0f2b7631cc41b3ba8828b3321ca811111fa75cd3aa3bb5ace0182905560009182526003602052604090912055565b60009081526004602052604090205490565b60015490565b60009081526003602052604090205490565b60008054604080516020601f600260001961010060018816150201909516949094049384018190048102820181019092528281526060939092909183018282801561033f5780601f106103145761010080835404028352916020019161033f565b820191906000526020600020905b81548152906001019060200180831161032257829003601f168201915b505050505090509056fea165627a7a723058209de50f3132d754597aa9c6990786d3ebc75a5e6944643e53c56db0c9fca13e140029";
+    private static final String BINARY = "608060405261271060015534801561001657600080fd5b506040516103cd3803806103cd8339810180604052604081101561003957600080fd5b81019080805164010000000081111561005157600080fd5b8201602081018481111561006457600080fd5b815185602082028301116401000000008211171561008157600080fd5b5050602090910151815191935091508290600090811061009d57fe5b602090810290910101516000556001818155825183919081106100bc57fe5b602090810290910101516002908155825183919081106100d857fe5b602090810290910101516003908155825183919081106100f457fe5b6020908102909101015160045550506102bb806101126000396000f3fe608060405234801561001057600080fd5b50600436106100c6576000357c01000000000000000000000000000000000000000000000000000000009004806375fb9c551161008e57806375fb9c551461017b5780638dd4fe42146101985780639111e381146101a0578063a1789650146101bd578063cba8388d146101c5578063e9e09f80146101cd576100c6565b806328b449ac146100cb57806342124db6146101025780635b98ef8814610131578063638dc2b51461014e578063684d9b5514610156575b600080fd5b6100ee600480360360408110156100e157600080fd5b50803590602001356101d5565b604080519115158252519081900360200190f35b61011f6004803603602081101561011857600080fd5b50356101e7565b60408051918252519081900360200190f35b61011f6004803603602081101561014757600080fd5b50356101f9565b61011f61020b565b6101796004803603604081101561016c57600080fd5b5080359060200135610211565b005b61011f6004803603602081101561019157600080fd5b5035610253565b61011f610265565b61011f600480360360208110156101b657600080fd5b503561026b565b61011f61027d565b61011f610283565b61011f610289565b60009182526007602052604082205590565b60076020526000908152604090205481565b60066020526000908152604090205481565b60035490565b60058054600181019091557f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db00182905560009182526006602052604090912055565b60009081526007602052604090205490565b60015490565b60009081526006602052604090205490565b60005490565b60025490565b6004549056fea165627a7a72305820be729c9f9835b6c241a359bf1cc484bcc57dc7d7fece776adb26fc7e657a73400029";
 
     public static final String FUNC_REVERSEBALANCEAMOUNTFROMSTATE = "reverseBalanceAmountFromState";
 
     public static final String FUNC_BALANCEAMOUNT = "balanceAmount";
 
     public static final String FUNC_SANCTIONEDAMOUNT = "sanctionedAmount";
+
+    public static final String FUNC_GETACCOUNTNAME = "getAccountName";
 
     public static final String FUNC_DISBURSEAMOUNTTOSTATE = "disburseAmountToState";
 
@@ -55,6 +58,10 @@ public class CentralContract extends Contract {
     public static final String FUNC_GETDISBURSEMENTAMOUNT = "getDisbursementAmount";
 
     public static final String FUNC_GETSCHEMENAME = "getSchemeName";
+
+    public static final String FUNC_GETACCOUNTNUMBER = "getAccountNumber";
+
+    public static final String FUNC_GETBANKCODE = "getBankcode";
 
     public static final Event SENT_EVENT = new Event("Sent", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}));
@@ -101,6 +108,13 @@ public class CentralContract extends Contract {
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
+    public RemoteFunctionCall<byte[]> getAccountName() {
+        final Function function = new Function(FUNC_GETACCOUNTNAME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
+    }
+
     public RemoteFunctionCall<TransactionReceipt> disburseAmountToState(BigInteger _stateId, BigInteger _amount) {
         final Function function = new Function(
                 FUNC_DISBURSEAMOUNTTOSTATE, 
@@ -131,11 +145,25 @@ public class CentralContract extends Contract {
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<String> getSchemeName() {
+    public RemoteFunctionCall<byte[]> getSchemeName() {
         final Function function = new Function(FUNC_GETSCHEMENAME, 
                 Arrays.<Type>asList(), 
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
-        return executeRemoteCallSingleValueReturn(function, String.class);
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
+    }
+
+    public RemoteFunctionCall<byte[]> getAccountNumber() {
+        final Function function = new Function(FUNC_GETACCOUNTNUMBER, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
+    }
+
+    public RemoteFunctionCall<byte[]> getBankcode() {
+        final Function function = new Function(FUNC_GETBANKCODE, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public List<SentEventResponse> getSentEvents(TransactionReceipt transactionReceipt) {
@@ -189,28 +217,36 @@ public class CentralContract extends Contract {
         return new CentralContract(contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
-    public static RemoteCall<CentralContract> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, String _schemeName, BigInteger _schemeAmount) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_schemeName), 
+    public static RemoteCall<CentralContract> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider, List<byte[]> _schemeDetails, BigInteger _schemeAmount) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Bytes32>(
+                        org.web3j.abi.datatypes.generated.Bytes32.class,
+                        org.web3j.abi.Utils.typeMap(_schemeDetails, org.web3j.abi.datatypes.generated.Bytes32.class)), 
                 new org.web3j.abi.datatypes.generated.Uint256(_schemeAmount)));
         return deployRemoteCall(CentralContract.class, web3j, credentials, contractGasProvider, BINARY, encodedConstructor);
     }
 
-    public static RemoteCall<CentralContract> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider, String _schemeName, BigInteger _schemeAmount) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_schemeName), 
+    public static RemoteCall<CentralContract> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider, List<byte[]> _schemeDetails, BigInteger _schemeAmount) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Bytes32>(
+                        org.web3j.abi.datatypes.generated.Bytes32.class,
+                        org.web3j.abi.Utils.typeMap(_schemeDetails, org.web3j.abi.datatypes.generated.Bytes32.class)), 
                 new org.web3j.abi.datatypes.generated.Uint256(_schemeAmount)));
         return deployRemoteCall(CentralContract.class, web3j, transactionManager, contractGasProvider, BINARY, encodedConstructor);
     }
 
     @Deprecated
-    public static RemoteCall<CentralContract> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, String _schemeName, BigInteger _schemeAmount) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_schemeName), 
+    public static RemoteCall<CentralContract> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit, List<byte[]> _schemeDetails, BigInteger _schemeAmount) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Bytes32>(
+                        org.web3j.abi.datatypes.generated.Bytes32.class,
+                        org.web3j.abi.Utils.typeMap(_schemeDetails, org.web3j.abi.datatypes.generated.Bytes32.class)), 
                 new org.web3j.abi.datatypes.generated.Uint256(_schemeAmount)));
         return deployRemoteCall(CentralContract.class, web3j, credentials, gasPrice, gasLimit, BINARY, encodedConstructor);
     }
 
     @Deprecated
-    public static RemoteCall<CentralContract> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit, String _schemeName, BigInteger _schemeAmount) {
-        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_schemeName), 
+    public static RemoteCall<CentralContract> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit, List<byte[]> _schemeDetails, BigInteger _schemeAmount) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.DynamicArray<org.web3j.abi.datatypes.generated.Bytes32>(
+                        org.web3j.abi.datatypes.generated.Bytes32.class,
+                        org.web3j.abi.Utils.typeMap(_schemeDetails, org.web3j.abi.datatypes.generated.Bytes32.class)), 
                 new org.web3j.abi.datatypes.generated.Uint256(_schemeAmount)));
         return deployRemoteCall(CentralContract.class, web3j, transactionManager, gasPrice, gasLimit, BINARY, encodedConstructor);
     }

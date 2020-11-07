@@ -5,7 +5,28 @@ public class Contract {
 	private int schemeAmount;
 	private int balanceAmount;
 	private String centralContractAddress;
-	
+    private String accountNumber;
+	private String accountName;
+	private String bankcode;
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	public String getBankcode() {
+		return bankcode;
+	}
+	public void setBankcode(String bankcode) {
+		this.bankcode = bankcode;
+	}
 	public int getBalanceAmount() {
 		return balanceAmount;
 	}
