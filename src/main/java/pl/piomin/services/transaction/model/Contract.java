@@ -3,12 +3,19 @@ package pl.piomin.services.transaction.model;
 public class Contract {
 	private String schemeName;
 	private int schemeAmount;
-	private int balanceAmount;
 	private String centralContractAddress;
     private String accountNumber;
 	private String accountName;
 	private String bankcode;
+	private String schemeDetails;
+	private int schemeBalanceAmount;
 
+	public String getSchemeDetails() {
+		return schemeDetails;
+	}
+	public void setSchemeDetails(String schemeDetails) {
+		this.schemeDetails = schemeDetails;
+	}
 	public String getAccountNumber() {
 		return accountNumber;
 	}
@@ -27,12 +34,6 @@ public class Contract {
 	public void setBankcode(String bankcode) {
 		this.bankcode = bankcode;
 	}
-	public int getBalanceAmount() {
-		return balanceAmount;
-	}
-	public void setBalanceAmount(int balanceAmount) {
-		this.balanceAmount = balanceAmount;
-	}
 	public String getSchemeName() {
 		return schemeName;
 	}
@@ -50,6 +51,12 @@ public class Contract {
 	}
 	public void setCentralContractAddress(String centralContractAddress) {
 		this.centralContractAddress = centralContractAddress;
+	}
+	public int getSchemeBalanceAmount() {
+		return schemeBalanceAmount;
+	}
+	public void setSchemeBalanceAmount(int schemeBalanceAmount) {
+		this.schemeBalanceAmount = schemeBalanceAmount;
 	}
 
 }
