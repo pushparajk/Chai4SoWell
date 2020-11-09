@@ -28,6 +28,7 @@ import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 
 import pl.piomin.services.transaction.model.Contract;
 import pl.piomin.services.transaction.model.DisbursementModel;
+import pl.piomin.services.transaction.model.DonationModel;
 import pl.piomin.services.transaction.model.FundAllocationModel;
 import pl.piomin.services.transaction.services.CentralSchemeService;
 
@@ -110,5 +111,12 @@ public class CentralContractController {
     	System.out.println("Inside getDisbursementAmount() in controller");
     	return service.getDisbursementDetails(newDisbursementModel);
     }
+
+    @PostMapping(path = "/makeDonation")
+    public DonationModel  makeDonation(@RequestBody DonationModel newDonationModel) throws Exception {
+    	System.out.println("Inside disburseAmountToIndividual() in controller");
+    	return service.makeDonation(newDonationModel);
+    }
+
 
 }
