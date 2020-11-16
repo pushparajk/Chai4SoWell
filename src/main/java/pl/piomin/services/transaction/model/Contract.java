@@ -10,9 +10,14 @@ public class Contract {
 	private String id;
 	private String schemeName;
 	private int schemeAmount;
-	private int balanceAmount;
 	private String centralContractAddress;
 	
+	private String accountNumber;
+	private String accountName;
+	private String bankcode;
+	private String schemeDetails;
+	private int schemeBalanceAmount;
+
 	public String getId()
 	{
 		return id;
@@ -22,11 +27,29 @@ public class Contract {
 	{
 		this.id = id;
 	}
-	public int getBalanceAmount() {
-		return balanceAmount;
+	public String getSchemeDetails() {
+		return schemeDetails;
 	}
-	public void setBalanceAmount(int balanceAmount) {
-		this.balanceAmount = balanceAmount;
+	public void setSchemeDetails(String schemeDetails) {
+		this.schemeDetails = schemeDetails;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	public String getBankcode() {
+		return bankcode;
+	}
+	public void setBankcode(String bankcode) {
+		this.bankcode = bankcode;
 	}
 	public String getSchemeName() {
 		return schemeName;
@@ -45,6 +68,12 @@ public class Contract {
 	}
 	public void setCentralContractAddress(String centralContractAddress) {
 		this.centralContractAddress = centralContractAddress;
+	}
+	public int getSchemeBalanceAmount() {
+		return schemeBalanceAmount;
+	}
+	public void setSchemeBalanceAmount(int schemeBalanceAmount) {
+		this.schemeBalanceAmount = schemeBalanceAmount;
 	}
 
 }

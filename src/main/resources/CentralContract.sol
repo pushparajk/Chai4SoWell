@@ -2,28 +2,23 @@ pragma solidity >=0.4.6;
 
 contract CentralContract {
 
-    // (1)
-    string schemeName="TestScheme";
-    // (2)
+    bytes32 schemeName;
     uint schemeAmount=10000;
-
-	// (3)
-	// enum StateCode{JK,HP,PB,CH,UK,HR,DL,RJ,UP,BR,SK,AR,NL,MN,MZ,TR,ML,AS,WB,JH,OD,CG,MP,GJ,DNHDD,MH,KA,GA,LD,KL,TN,PY,AN,TS,AD,LA,OT}
-	// enum StateCode{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,26,27,29,30,31,32,33,34,35,36,37,38,97} can't have uint in enum
-	// (4)
+    bytes32 accountNumber;
+	bytes32 accountName;
+	bytes32 bankcode;
 	uint[] selectedStates;
-    // (5)
-    mapping (uint => uint) public sanctionedAmount;
-    // (6)
+	mapping (uint => uint) public sanctionedAmount;
     mapping (uint => uint) public balanceAmount;
-
-    // (5)
 	
 	event Sent(string __schemeName, uint __schemeAmount);
 	
-	    constructor(string memory _schemeName, uint _schemeAmount) public {
-        schemeName = _schemeName;
+	    constructor(bytes32[] memory _schemeDetails, uint _schemeAmount  ) public {
+        schemeName = _schemeDetails[0];
         schemeAmount = _schemeAmount;
+		accountNumber = _schemeDetails[1];
+		accountName = _schemeDetails[2];
+		bankcode = _schemeDetails[3];
     }
 
 
@@ -36,7 +31,7 @@ contract CentralContract {
 			
 	}
 	
-	function getSchemeName() public view returns(string memory ){
+	function getSchemeName() public view returns(bytes32){
 		return  schemeName;
 	}
 	
@@ -55,5 +50,19 @@ contract CentralContract {
 	function getBalanceAmount(uint _stateId) public view returns(uint _balanceAmount){
 		return balanceAmount[_stateId];
 	}	
+
+	function getAccountNumber() public view returns(bytes32  ){
+		return  accountNumber;
+	}
+
+	function getAccountName() public view returns(bytes32 ){
+		return  accountName;
+	}
+
+	function getBankcode() public view returns(bytes32  ){
+		return  bankcode;
+	}
+
+
 
 }
