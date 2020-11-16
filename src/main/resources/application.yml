@@ -1,6 +1,11 @@
 spring:
   application:
     name: transaction-service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: simbu
 server:
   port: ${PORT:8091}
 web3j:
