@@ -43,7 +43,7 @@ import pl.piomin.services.transaction.repository.CentralSchemeRepository;
 
 @Service
 public class CentralSchemeService {
-
+	// This service takes care of block chain interaction.
     private static final Logger LOGGER = LoggerFactory.getLogger(CentralSchemeService.class);
     public static final BigInteger GAS_PRICE = BigInteger.valueOf(1L);
     public static final BigInteger GAS_LIMIT = BigInteger.valueOf(21_000L);
