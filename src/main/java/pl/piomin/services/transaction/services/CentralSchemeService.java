@@ -39,6 +39,7 @@ import pl.piomin.services.transaction.model.DonationContract;
 import pl.piomin.services.transaction.model.DonationModel;
 import pl.piomin.services.transaction.model.FundAllocationModel;
 import pl.piomin.services.transaction.model.StateContract;
+import pl.piomin.services.transaction.repository.CentralSchemeRepository;
 
 @Service
 public class CentralSchemeService {
@@ -59,6 +60,9 @@ public class CentralSchemeService {
     //String url;
     @Autowired
     RestTemplate template;
+	@Autowired
+	CentralSchemeRepository centralSchemeRepository;
+
     @PostConstruct
     public void init() throws IOException, CipherException, NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
     	System.out.println("inside PostConstruct ");
@@ -405,6 +409,7 @@ public class CentralSchemeService {
     	if (tr.isPresent()) {
     		LOGGER.info("Transaction receipt: from={}, to={}, gas={}", tr.get().getFrom(), tr.get().getTo(), tr.get().getGasUsed().intValue());
     	}
+		centralSchemeRepository.save(newContract);
     	return newContract;
 	
 	}
