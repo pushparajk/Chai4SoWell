@@ -319,7 +319,7 @@ public class CentralSchemeService
 		return individualFundDisbursementRepository.findAll(Example.of(stateContract), Sort.by(Sort.Direction.ASC, "disbursementAmount"));
 	}
 
-	public StateFundAllocation reverseBalanceAmountFromState(StateFundAllocation newFundAllocationModel)
+	public Contract reverseBalanceAmountFromState(StateFundAllocation newFundAllocationModel)
 	{
 		String address = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
@@ -352,8 +352,9 @@ public class CentralSchemeService
 		{
 			centralContract.get().setSchemeBalanceAmount(centralContract.get().getSchemeBalanceAmount() + stateContract.get().getSchemeBalanceAmount());
 			centralSchemeRepository.save(centralContract.get());
+			return centralContract.get();
 		}
-		return newFundAllocationModel;
+		return null;
 	}
 
 	public StateFundAllocation getReverseBalanceAmountFromState(StateFundAllocation newFundAllocationModel)

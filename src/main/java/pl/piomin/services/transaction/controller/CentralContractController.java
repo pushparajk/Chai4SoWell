@@ -87,7 +87,8 @@ public class CentralContractController {
 
     
     @PostMapping(path = "/reverseBalanceAmountFromState")
-    public StateFundAllocation reverseBalanceAmountFromState(@RequestBody StateFundAllocation newDisbursementModel) throws Exception {
+	public Contract reverseBalanceAmountFromState(@RequestBody StateFundAllocation newDisbursementModel) throws Exception
+	{
     	System.out.println("Inside reverseBalanceAmountFromState() in controller");
     	return service.reverseBalanceAmountFromState(newDisbursementModel);
     }
