@@ -7,26 +7,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Contract {
 
 	@Id
-	private String id;
-	private String schemeName;
-	private int schemeAmount;
 	private String centralContractAddress;
-	
+	private String schemeName;
+	private Integer schemeAmount;
 	private String accountNumber;
 	private String accountName;
 	private String bankcode;
 	private String schemeDetails;
-	private int schemeBalanceAmount;
+	private Integer schemeBalanceAmount;
 
-	public String getId()
-	{
-		return id;
-	}
-
-	public void setId(String id)
-	{
-		this.id = id;
-	}
 	public String getSchemeDetails() {
 		return schemeDetails;
 	}
@@ -57,10 +46,14 @@ public class Contract {
 	public void setSchemeName(String schemeName) {
 		this.schemeName = schemeName;
 	}
-	public int getSchemeAmount() {
+
+	public Integer getSchemeAmount()
+	{
 		return schemeAmount;
 	}
-	public void setSchemeAmount(int schemeAmount) {
+
+	public void setSchemeAmount(Integer schemeAmount)
+	{
 		this.schemeAmount = schemeAmount;
 	}
 	public String getCentralContractAddress() {
@@ -69,10 +62,14 @@ public class Contract {
 	public void setCentralContractAddress(String centralContractAddress) {
 		this.centralContractAddress = centralContractAddress;
 	}
-	public int getSchemeBalanceAmount() {
+
+	public Integer getSchemeBalanceAmount()
+	{
 		return schemeBalanceAmount;
 	}
-	public void setSchemeBalanceAmount(int schemeBalanceAmount) {
+
+	public void setSchemeBalanceAmount(Integer schemeBalanceAmount)
+	{
 		this.schemeBalanceAmount = schemeBalanceAmount;
 	}
 

@@ -1,15 +1,43 @@
 package pl.piomin.services.transaction.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "donation")
 public class DonationModel {
 	
-    String centralAddress;
+	@Id
 	String donationAddress;
+	String centralAddress;
+	String firstName;
+	String LastName;
 	String identificationNo;
 	String taxIdentificationNo;
 	String donorAccountNo;
 	String donorAccountName;
 	String donorBankCode;
-    int donationAmount;
+	Integer donationAmount;
+
+
+	public String getFirstName()
+	{
+		return firstName;
+	}
+
+	public void setFirstName(String firstName)
+	{
+		this.firstName = firstName;
+	}
+
+	public String getLastName()
+	{
+		return LastName;
+	}
+
+	public void setLastName(String lastName)
+	{
+		LastName = lastName;
+	}
 	public String getCentralAddress() {
 		return centralAddress;
 	}
@@ -52,10 +80,14 @@ public class DonationModel {
 	public void setDonorBankCode(String donorBankCode) {
 		this.donorBankCode = donorBankCode;
 	}
-	public int getDonationAmount() {
+
+	public Integer getDonationAmount()
+	{
 		return donationAmount;
 	}
-	public void setDonationAmount(int donationAmount) {
+
+	public void setDonationAmount(Integer donationAmount)
+	{
 		this.donationAmount = donationAmount;
 	}
 

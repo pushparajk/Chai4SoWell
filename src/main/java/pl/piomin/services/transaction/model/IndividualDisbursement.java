@@ -1,21 +1,48 @@
 package pl.piomin.services.transaction.model;
 
-public class DisbursementModel {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "individualFundAllocation")
+public class IndividualDisbursement {
+
+	@Id
+	String disbursementAddress;
 	String identificationNumber;
 	String bankCode;
 	String accountNumber;
-	int disbursementAmount;
-	int stateId;
-	String disbursementAddress;
-	
+	String firstName;
+	String lastName;
+	Integer disbursementAmount;
+	Integer stateId;
+	String stateContractAddress;
+
+	public String getFirstName()
+	{
+		return firstName;
+	}
+
+	public void setFirstName(String firstName)
+	{
+		this.firstName = firstName;
+	}
+
+	public String getLastName()
+	{
+		return lastName;
+	}
+
+	public void setLastName(String lastName)
+	{
+		this.lastName = lastName;
+	}
 	public String getDisbursementAddress() {
 		return disbursementAddress;
 	}
 	public void setDisbursementAddress(String disbursementAddress) {
 		this.disbursementAddress = disbursementAddress;
 	}
-	String stateContractAddress;
+
 	public String getStateContractAddress() {
 		return stateContractAddress;
 	}
@@ -40,17 +67,24 @@ public class DisbursementModel {
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
-	public int getDisbursementAmount() {
+
+	public Integer getDisbursementAmount()
+	{
 		return disbursementAmount;
 	}
-	public void setDisbursementAmount(int disbursementAmount) {
+
+	public void setDisbursementAmount(Integer disbursementAmount)
+	{
 		this.disbursementAmount = disbursementAmount;
 	}
 
-	public int getStateId() {
+	public Integer getStateId()
+	{
 		return stateId;
 	}
-	public void setStateId(int stateId) {
+
+	public void setStateId(Integer stateId)
+	{
 		this.stateId = stateId;
 	}
 }
