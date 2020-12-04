@@ -225,8 +225,8 @@ public class CentralSchemeService
 			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
 			newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
 			newFundAllocationModel.setCentralAddress(address);
-			newFundAllocationModel.setSchemeBalanceAmount(disbursementAmount);
-			newFundAllocationModel.setReturnedAmount(0);
+			newFundAllocationModel.setSchemeBalanceAmount(actualContract.getSchemeBalanceAmount().send().intValue());
+			
 		}
 		catch (Exception e)
 		{
