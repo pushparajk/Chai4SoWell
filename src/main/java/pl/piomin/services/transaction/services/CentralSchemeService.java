@@ -212,24 +212,23 @@ public class CentralSchemeService
 	public StateFundAllocation disburseAmountToState(StateFundAllocation newFundAllocationModel)
 	{
 		// TODO Auto-generated method stub
-		String centralAddress = newFundAllocationModel.getCentralAddress();
+		String address = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
 		int disbursementAmount = newFundAllocationModel.getSanctionedAmount();
-		System.out.println("Inside disburseAmountToState address = " + centralAddress);
+		System.out.println("Inside disburseAmountToState address = " + address);
 		CentralContract actualContract;
 		boolean status = true;
 		try
 		{
-			actualContract = CentralContract.load(centralAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			actualContract = CentralContract.load(address, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
 			//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
 			String schemeName = actualContract.getSchemeName().send().toString();
 			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), centralAddress, BigInteger.valueOf(stateId)).send();
 			newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
-			newFundAllocationModel.setCentralAddress(centralAddress);
-			newFundAllocationModel.setSchemeBalanceAmount(disbursementAmount);
-			newFundAllocationModel.setReturnedAmount(0);
-			newFundAllocationModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
+			newFundAllocationModel.setCentralAddress(address);
+			newFundAllocationModel.setSchemeBalanceAmount(actualContract.getSchemeBalanceAmount().send().intValue());
+			
 		}
 		catch (Exception e)
 		{
