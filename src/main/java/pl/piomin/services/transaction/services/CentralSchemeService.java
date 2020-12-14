@@ -54,12 +54,14 @@ import pl.piomin.services.transaction.model.IndividualDisbursement;
 import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateContract;
 import pl.piomin.services.transaction.model.StateFundAllocation;
+import pl.piomin.services.transaction.model.TransferModel;
 import pl.piomin.services.transaction.repository.BankRepository;
 import pl.piomin.services.transaction.repository.CentralSchemeRepository;
 import pl.piomin.services.transaction.repository.DonationRepository;
 import pl.piomin.services.transaction.repository.IndividualFundDisbursementRepository;
 import pl.piomin.services.transaction.repository.StateFundAllocationRepository;
 import pl.piomin.services.transaction.repository.StateRepository;
+import pl.piomin.services.transaction.utils.TransactionContants;
 
 @Service
 public class CentralSchemeService
@@ -210,23 +212,24 @@ public class CentralSchemeService
 	public StateFundAllocation disburseAmountToState(StateFundAllocation newFundAllocationModel)
 	{
 		// TODO Auto-generated method stub
-		String address = newFundAllocationModel.getCentralAddress();
+		String centralAddress = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
 		int disbursementAmount = newFundAllocationModel.getSanctionedAmount();
-		System.out.println("Inside disburseAmountToState address = " + address);
+		System.out.println("Inside disburseAmountToState address = " + centralAddress);
 		CentralContract actualContract;
 		boolean status = true;
 		try
 		{
-			actualContract = CentralContract.load(address, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			actualContract = CentralContract.load(centralAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
 			//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
 			String schemeName = actualContract.getSchemeName().send().toString();
-			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
+			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), centralAddress, BigInteger.valueOf(stateId)).send();
 			newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
-			newFundAllocationModel.setCentralAddress(address);
+			newFundAllocationModel.setCentralAddress(centralAddress);
 			newFundAllocationModel.setSchemeBalanceAmount(disbursementAmount);
 			newFundAllocationModel.setReturnedAmount(0);
+			newFundAllocationModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 		}
 		catch (Exception e)
 		{
@@ -235,12 +238,19 @@ public class CentralSchemeService
 		}
 
 		StateFundAllocation stateFundAllocation = stateFundAllocationRepository.save(newFundAllocationModel);
-		Optional<Contract> findById = centralSchemeRepository.findById(address);
+		Optional<Contract> findById = centralSchemeRepository.findById(centralAddress);
 		if (findById.isPresent())
 		{
 			findById.get().setSchemeBalanceAmount(findById.get().getSchemeBalanceAmount() - disbursementAmount);
 			centralSchemeRepository.save(findById.get());
 		}
+		TransferModel transferModel = new TransferModel();
+		transferModel.setAmount(newFundAllocationModel.getSanctionedAmount());
+		transferModel.setFromAccount(TransactionContants.CENTER_ACCOUNT);
+		transferModel.setToAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setCurrency(TransactionContants.CURRENCY);
+		String fundTransfer = fFDCService.FundTransfer(transferModel);
+		
 		return stateFundAllocation;
 	}
 
@@ -294,6 +304,7 @@ public class CentralSchemeService
 			System.out.println("disbursementContract is valid =" + disbursementContract.isValid());
 			System.out.println("disbursementContract  address =" + disbursementContract.getContractAddress());
 			newDisbursementModel.setDisbursementAddress(disbursementContract.getContractAddress());
+			newDisbursementModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 			/* Later add the code for deploying the individual disbursement contract */
 		}
 		catch (Exception e)
@@ -309,6 +320,13 @@ public class CentralSchemeService
 			findById.get().setSchemeBalanceAmount(findById.get().getSanctionedAmount() - disbursementAmount);
 			stateFundAllocationRepository.save(findById.get());
 		}
+		//FFDC call for fund transfer
+		TransferModel transferModel = new TransferModel();
+		transferModel.setAmount(newDisbursementModel.getDisbursementAmount());
+		transferModel.setFromAccount(TransactionContants.CENTER_ACCOUNT);
+		transferModel.setToAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setCurrency(TransactionContants.CURRENCY);
+		String fundTransfer = fFDCService.FundTransfer(transferModel);
 		return individualDisbursement;
 	}
 
@@ -545,17 +563,9 @@ public class CentralSchemeService
 		return individualFundDisbursementRepository.findAll();
 	}
 
-	public AccountCreationResponse getAccountNumber(IndividualDisbursement newDisbursementModel)
+	public AccountCreationResponse createCustomer(IndividualDisbursement newDisbursementModel)
 	{
-		IndividualDisbursement stateContract = new IndividualDisbursement();
-		stateContract.setIdentificationNumber(newDisbursementModel.getIdentificationNumber());
-		Optional<IndividualDisbursement> findOne = individualFundDisbursementRepository.findOne(Example.of(stateContract));
-		if (findOne.isPresent())
-		{
-			AccountCreationResponse accCreationResponse = new AccountCreationResponse();
-			accCreationResponse.setAccountId(findOne.get().getAccountNumber());
-			return accCreationResponse;
-		}
+
 		Customer customer = new Customer();
 		Identification identification = new Identification();
 		identification.setId(newDisbursementModel.getIdentificationNumber());

@@ -134,11 +134,11 @@ public class CentralContractController {
 		return service.getDisbursementDetails();
     }
 
-	@PostMapping(value = "/checkAccountNumber")
-	public AccountCreationResponse getAccountNumber(@RequestBody IndividualDisbursement individualDisbursement)
+	@PostMapping(value = "/CreateCustomer")
+	public AccountCreationResponse createCustomer(@RequestBody IndividualDisbursement individualDisbursement)
 	{
-		System.out.println("Inside getAccountNumber() in controller");
-		return service.getAccountNumber(individualDisbursement);
+		System.out.println("Inside createCustomer() in controller");
+		return service.createCustomer(individualDisbursement);
 	}
 
 	@GetMapping(value = "/getDisbursementDetailsByStateContract/{stateContractAddress}")

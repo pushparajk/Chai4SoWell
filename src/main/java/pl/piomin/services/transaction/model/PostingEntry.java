@@ -2,15 +2,15 @@ package pl.piomin.services.transaction.model;
 
 public class PostingEntry
 {
-	public String accountId;
-	public Amount amount;
-	public BaseEquivalent baseEquivalent;
-	public int exchangeRate;
-	public String blockReference;
-	public String chequeNumber;
-	public String creditDebitIndicator;
-	public String narrative;
-	public String postingType;
+	private String accountId;
+	private Amount amount;
+	private BaseEquivalent baseEquivalent;
+	private int exchangeRate;
+	private String blockReference;
+	private String chequeNumber;
+	private String creditDebitIndicator;
+	private String narrative;
+	private String postingType;
 
 	public String getAccountId()
 	{

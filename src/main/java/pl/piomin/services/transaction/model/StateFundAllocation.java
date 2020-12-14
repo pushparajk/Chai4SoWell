@@ -14,6 +14,19 @@ public class StateFundAllocation {
 	private Integer schemeBalanceAmount;
 	private Integer returnedAmount;
 	private String schemeName;
+	private String contractStatus;
+	
+	
+
+	public String getContractStatus()
+	{
+		return contractStatus;
+	}
+
+	public void setContractStatus(String contractStatus)
+	{
+		this.contractStatus = contractStatus;
+	}
 
 	public Integer getSchemeBalanceAmount()
 	{

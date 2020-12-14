@@ -7,15 +7,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class IndividualDisbursement {
 
 	@Id
-	String disbursementAddress;
-	String identificationNumber;
-	String bankCode;
-	String accountNumber;
-	String firstName;
-	String lastName;
-	Integer disbursementAmount;
-	Integer stateId;
-	String stateContractAddress;
+	private String disbursementAddress;
+	private String identificationNumber;
+	private String bankCode;
+	private String accountNumber;
+	private String firstName;
+	private String lastName;
+	private Integer disbursementAmount;
+	private Integer stateId;
+	private String stateContractAddress;
+	
+	private String contractStatus;
+
+	public String getContractStatus()
+	{
+		return contractStatus;
+	}
+
+	public void setContractStatus(String contractStatus)
+	{
+		this.contractStatus = contractStatus;
+	}
 
 	public String getFirstName()
 	{

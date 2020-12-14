@@ -5,6 +5,13 @@ public class BaseEquivalent
 	private String currency;
 	private int amount;
 
+	public BaseEquivalent(String currency, int amount)
+	{
+		super();
+		this.currency = currency;
+		this.amount = amount;
+	}
+
 	public String getCurrency()
 	{
 		return currency;
