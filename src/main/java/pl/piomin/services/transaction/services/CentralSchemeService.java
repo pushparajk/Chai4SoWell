@@ -224,7 +224,7 @@ public class CentralSchemeService
 			TransactionReceipt transactionReceipt = actualContract.disburseAmountToState(BigInteger.valueOf(stateId), BigInteger.valueOf(disbursementAmount)).send();
 			//CentralContract contract = CentralContract.deploy(web3j,credentials,BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L),newContract.getSchemeName().toString(),BigInteger.valueOf(newContract.getSchemeAmount())).send();
 			String schemeName = actualContract.getSchemeName().send().toString();
-			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), centralAddress, BigInteger.valueOf(stateId)).send();
+			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
 			newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
 			newFundAllocationModel.setCentralAddress(address);
 			newFundAllocationModel.setSchemeBalanceAmount(actualContract.getSchemeBalanceAmount().send().intValue());
@@ -237,7 +237,7 @@ public class CentralSchemeService
 		}
 
 		StateFundAllocation stateFundAllocation = stateFundAllocationRepository.save(newFundAllocationModel);
-		Optional<Contract> findById = centralSchemeRepository.findById(centralAddress);
+		Optional<Contract> findById = centralSchemeRepository.findById(address);
 		if (findById.isPresent())
 		{
 			findById.get().setSchemeBalanceAmount(findById.get().getSchemeBalanceAmount() - disbursementAmount);
