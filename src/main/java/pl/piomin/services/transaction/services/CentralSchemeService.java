@@ -659,7 +659,7 @@ public class CentralSchemeService
 		// Verify the stateFund with contract in ethereum
 		//	ToDo
 		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name();
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
 			stateFund.get().setContractStatus(status);
 			stateFundAllocationRepository.save(stateFund.get());
 			return status;
@@ -676,9 +676,46 @@ public class CentralSchemeService
 		// Verify the individualDisbursement with contract in ethereum
 		//	ToDo
 		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name();
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
 			individualDisbursement.get().setContractStatus(status);
 			individualFundDisbursementRepository.save(individualDisbursement.get());
+			return status;
+		}
+		return null;
+	}
+	
+	public String verifyAllStateContract()
+	{
+		StateFundAllocation  stateFundAllocation = new StateFundAllocation();
+		stateFundAllocation.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
+		List<StateFundAllocation> listContract = stateFundAllocationRepository.findAll(Example.of(stateFundAllocation));
+		for(StateFundAllocation stateFund : listContract) 
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			stateFund.setContractStatus(status);
+			stateFundAllocationRepository.save(stateFund);
+			return status;
+		}
+		return null;
+	}
+	
+	
+	public String verifyAllIndividualContract()
+	{
+		IndividualDisbursement  individualDisbursement = new IndividualDisbursement();
+		individualDisbursement.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
+		List<IndividualDisbursement> listContract = individualFundDisbursementRepository.findAll(Example.of(individualDisbursement));
+		for(IndividualDisbursement individualDisburse : listContract) 
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			individualDisburse.setContractStatus(status);
+			individualFundDisbursementRepository.save(individualDisburse);
 			return status;
 		}
 		return null;
