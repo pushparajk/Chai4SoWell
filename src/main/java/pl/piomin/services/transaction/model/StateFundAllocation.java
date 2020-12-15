@@ -17,7 +17,7 @@ public class StateFundAllocation {
 	@NotNull
 	private Integer stateId;
 	@NotNull
-	private String stateName;
+	private String homeName;
 	@NotNull
 	private Integer sanctionedAmount;
 	private Integer schemeBalanceAmount;
@@ -28,14 +28,16 @@ public class StateFundAllocation {
 	private Date createdDate;
 
 	
-	public String getStateName()
+
+
+	public String getHomeName()
 	{
-		return stateName;
+		return homeName;
 	}
 
-	public void setStateName(String stateName)
+	public void setHomeName(String homeName)
 	{
-		this.stateName = stateName;
+		this.homeName = homeName;
 	}
 
 	public Date getCreatedDate()
