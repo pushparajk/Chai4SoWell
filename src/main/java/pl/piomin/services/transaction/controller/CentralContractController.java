@@ -3,6 +3,8 @@ package pl.piomin.services.transaction.controller;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +82,7 @@ public class CentralContractController {
 
     
     @PostMapping(path = "/disburseAmountToState")
-    public StateFundAllocation disburseAmountToState(@RequestBody StateFundAllocation newDisbursementModel) throws Exception {
+    public StateFundAllocation disburseAmountToState(@Valid @RequestBody StateFundAllocation newDisbursementModel) throws Exception {
 		System.out.println("Inside disburseAmountToState()");
     	return service.disburseAmountToState(newDisbursementModel);
     }
@@ -122,7 +124,7 @@ public class CentralContractController {
 	}
 
     @PostMapping(path = "/disburseAmountToIndividual")
-    public IndividualDisbursement disburseAmountToIndividual(@RequestBody IndividualDisbursement newDisbursementModel) throws Exception {
+    public IndividualDisbursement disburseAmountToIndividual( @Valid @RequestBody IndividualDisbursement newDisbursementModel) throws Exception {
     	System.out.println("Inside disburseAmountToIndividual() in controller");
     	return service.disburseAmountToIndividual(newDisbursementModel);
     }
@@ -149,7 +151,7 @@ public class CentralContractController {
 	}
 
 	@GetMapping(value = "/getDisbursementDetailsByStateContract/{stateContractAddress}")
-	public List<IndividualDisbursement> getDisbursementDetailsByStateContract(@PathVariable("stateContractAddress") String stateContractAddress)
+	public List<IndividualDisbursement> getDisbursementDetailsByStateContract(@Valid @PathVariable("stateContractAddress") String stateContractAddress)
 	{
 		System.out.println("Inside getDisbursementDetailsByStateContract() in controller");
 		return service.getIndividualDisbursementByStateContract(stateContractAddress);
