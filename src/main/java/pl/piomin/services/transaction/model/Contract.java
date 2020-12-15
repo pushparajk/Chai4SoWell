@@ -1,5 +1,7 @@
 package pl.piomin.services.transaction.model;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +17,17 @@ public class Contract {
 	private String bankcode;
 	private String schemeDetails;
 	private Integer schemeBalanceAmount;
+	private Date createdDate;
+
+	public Date getCreatedDate()
+	{
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate)
+	{
+		this.createdDate = createdDate;
+	}
 
 	public String getSchemeDetails() {
 		return schemeDetails;

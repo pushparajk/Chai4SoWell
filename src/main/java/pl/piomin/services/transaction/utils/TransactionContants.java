@@ -41,6 +41,8 @@ public class TransactionContants
 	public static final String FFDC_CUSTOMER_CREATE = "https://api.preprod.fusionfabric.cloud/retail-banking/customers/v1/personal-customers";
 
 	public static final String FFDC_FIN_POSTING = "https://api.preprod.fusionfabric.cloud/retail-banking/transactions/v1/financial-postings";
+	
+	public static final String ML_URL = "http://localhost:5444";
 
 }
 

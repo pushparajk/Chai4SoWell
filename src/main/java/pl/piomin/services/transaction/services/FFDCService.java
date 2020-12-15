@@ -1,5 +1,6 @@
 package pl.piomin.services.transaction.services;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import pl.piomin.services.transaction.model.EmailAddress;
 import pl.piomin.services.transaction.model.FatcaDetails;
 import pl.piomin.services.transaction.model.FinancialPosting;
 import pl.piomin.services.transaction.model.Identification;
+import pl.piomin.services.transaction.model.IndividualDisbursement;
 import pl.piomin.services.transaction.model.OAuthTokenResponse;
 import pl.piomin.services.transaction.model.PhoneNumber;
 import pl.piomin.services.transaction.model.PostingEntry;
@@ -116,6 +118,22 @@ public class FFDCService
 		return response.getBody();
 	}
 
+	
+	public String checkCustomer(IndividualDisbursement individualDisbursement){
+		 DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy"); 
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE.toString());
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		map.add("gender", individualDisbursement.getGender());
+		map.add("dob", dateFormat.format(individualDisbursement.getDob()));
+		map.add("is_employed", individualDisbursement.getIsEmployed());
+		map.add("income", individualDisbursement.getIncome());
+		map.add("amount", individualDisbursement.getDisbursementAmount().toString());
+		map.add("txn_date",  dateFormat.format(new Date()));
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		ResponseEntity<String> response = restTemplate.exchange(TransactionContants.ML_URL, HttpMethod.POST, entity, String.class);
+		return response.getBody();
+	}
 	public Customer createCustomer(Customer insertcustomer)
 	{
 

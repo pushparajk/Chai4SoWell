@@ -9,6 +9,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -215,6 +216,7 @@ public class CentralSchemeService
 		String address = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
 		int disbursementAmount = newFundAllocationModel.getSanctionedAmount();
+		newFundAllocationModel.setCreatedDate(new Date());
 		System.out.println("Inside disburseAmountToState address = " + address);
 		CentralContract actualContract;
 		boolean status = true;
@@ -235,7 +237,7 @@ public class CentralSchemeService
 			e.printStackTrace();
 			status = false;
 		}
-
+		newFundAllocationModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 		StateFundAllocation stateFundAllocation = stateFundAllocationRepository.save(newFundAllocationModel);
 		Optional<Contract> findById = centralSchemeRepository.findById(address);
 		if (findById.isPresent())
@@ -289,6 +291,7 @@ public class CentralSchemeService
 		String accountNumber = newDisbursementModel.getAccountNumber();
 		String identificationNumber = newDisbursementModel.getIdentificationNumber();
 		int disbursementAmount = newDisbursementModel.getDisbursementAmount();
+		newDisbursementModel.setCreatedDate(new Date());
 		// TODO Auto-generated method stub
 		System.out.println("Inside disburseAmountToIndividual address = " + stateAddress);
 		boolean status = true;
@@ -574,6 +577,12 @@ public class CentralSchemeService
 		Customer createCustomer = fFDCService.createCustomer(customer); //FFDC Customer create
 		return fFDCService.createAccount(createCustomer); //FFDC Account create
 	}
+	
+	public String checkCustomer(IndividualDisbursement newDisbursementModel)
+	{
+
+		return fFDCService.checkCustomer(newDisbursementModel); //FFDC Customer create
+	}
 
 	public IndividualDisbursement getDisbursementDetails(String newDisbursementModel)
 	{
@@ -605,6 +614,7 @@ public class CentralSchemeService
 		String donorAccountName = newDonationModel.getDonorAccountName();
 		String donorBankCode = newDonationModel.getDonorBankCode();
 		int donationAmount = newDonationModel.getDonationAmount();
+		newDonationModel.setCreatedDate(new Date());
 
 		List<byte[]> inputParams = new ArrayList<>();
 		//inputParams.add(stringToBytes32(centralAddress).getValue());
@@ -638,6 +648,40 @@ public class CentralSchemeService
 	public List<DonationModel> getDonationList()
 	{
 		return donationRepository.findAll();
+	}
+	
+	public String verifyStateContract(String stateAddress)
+	{
+		
+		Optional<StateFundAllocation> stateFund = stateFundAllocationRepository.findById(stateAddress);
+		if (stateFund.isPresent())
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name();
+			stateFund.get().setContractStatus(status);
+			stateFundAllocationRepository.save(stateFund.get());
+			return status;
+		}
+		return null;
+	}
+	
+	public String verifyIndividualDisburementContract(String disbursementAddress)
+	{
+		
+		Optional<IndividualDisbursement> individualDisbursement = individualFundDisbursementRepository.findById(disbursementAddress);
+		if (individualDisbursement.isPresent())
+		{
+		// Verify the individualDisbursement with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name();
+			individualDisbursement.get().setContractStatus(status);
+			individualFundDisbursementRepository.save(individualDisbursement.get());
+			return status;
+		}
+		return null;
 	}
 
 }

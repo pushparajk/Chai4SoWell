@@ -140,6 +140,13 @@ public class CentralContractController {
 		System.out.println("Inside createCustomer() in controller");
 		return service.createCustomer(individualDisbursement);
 	}
+	
+	@PostMapping(value = "/CheckCustomer")
+	public String checkCustomer(@RequestBody IndividualDisbursement individualDisbursement)
+	{
+		System.out.println("Inside checkCustomer() in controller");
+		return service.checkCustomer(individualDisbursement);
+	}
 
 	@GetMapping(value = "/getDisbursementDetailsByStateContract/{stateContractAddress}")
 	public List<IndividualDisbursement> getDisbursementDetailsByStateContract(@PathVariable("stateContractAddress") String stateContractAddress)
@@ -167,5 +174,18 @@ public class CentralContractController {
 		System.out.println("Inside getDonationList() in controller");
 		return service.getDonationList();
 	}
+	@GetMapping(value = "/verifyStateContract/{stateAddress}")
+	public String verifyStateContract(@PathVariable("stateAddress") String stateAddress)
+	{
+		return service.verifyStateContract(stateAddress);
+	}
+	
+	@GetMapping(value = "/verifyIndividualContract/{disbursementAddress}")
+	public String verifyIndividualContract(@PathVariable("disbursementAddress") String disbursementAddress)
+	{
+		return service.verifyIndividualDisburementContract(disbursementAddress);
+	}
+
+	
 
 }

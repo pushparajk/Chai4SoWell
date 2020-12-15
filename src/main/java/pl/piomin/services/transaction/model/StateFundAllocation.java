@@ -1,5 +1,9 @@
 package pl.piomin.services.transaction.model;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,13 +12,41 @@ public class StateFundAllocation {
 
 	@Id
 	private String stateContractAddress;
+	@NotNull
 	private String centralAddress; 
+	@NotNull
 	private Integer stateId;
+	@NotNull
+	private String stateName;
+	@NotNull
 	private Integer sanctionedAmount;
 	private Integer schemeBalanceAmount;
 	private Integer returnedAmount;
+	@NotNull
 	private String schemeName;
 	private String contractStatus;
+	private Date createdDate;
+
+	
+	public String getStateName()
+	{
+		return stateName;
+	}
+
+	public void setStateName(String stateName)
+	{
+		this.stateName = stateName;
+	}
+
+	public Date getCreatedDate()
+	{
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate)
+	{
+		this.createdDate = createdDate;
+	}
 	
 	
 
