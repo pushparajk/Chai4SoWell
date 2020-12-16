@@ -178,7 +178,7 @@ public class CentralContractController {
 		return service.getDonationList();
 	}
 	@GetMapping(value = "/verifyStateContract/{stateAddress}")
-	public String verifyStateContract(@PathVariable("stateAddress") String stateAddress)
+	public StateFundAllocation verifyStateContract(@PathVariable("stateAddress") String stateAddress)
 	{
 		return service.verifyStateContract(stateAddress);
 	}
