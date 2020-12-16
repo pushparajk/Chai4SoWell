@@ -2,7 +2,7 @@ package pl.piomin.services.transaction.model;
 
 public class Identification
 {
-	public String type;
+	private String type;
 
 	public String getType()
 	{

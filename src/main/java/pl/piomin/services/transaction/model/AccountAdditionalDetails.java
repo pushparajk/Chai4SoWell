@@ -4,11 +4,11 @@ import java.util.List;
 
 public class AccountAdditionalDetails
 {
-	public String modeOfOperation;
-	public String accountName;
-	public List<Object> jointCustomerDetails;
-	public List<Object> mandateDetails;
-	public String postingRestriction;
+	private String modeOfOperation;
+	private String accountName;
+	private List<Object> jointCustomerDetails;
+	private List<Object> mandateDetails;
+	private String postingRestriction;
 
 	public String getModeOfOperation()
 	{

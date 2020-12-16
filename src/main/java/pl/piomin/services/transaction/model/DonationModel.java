@@ -1,5 +1,7 @@
 package pl.piomin.services.transaction.model;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,17 +9,29 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DonationModel {
 	
 	@Id
-	String donationAddress;
-	String centralAddress;
-	String firstName;
-	String LastName;
-	String identificationNo;
-	String taxIdentificationNo;
-	String donorAccountNo;
-	String donorAccountName;
-	String donorBankCode;
-	Integer donationAmount;
+	private String donationAddress;
+	private String centralAddress;
+	private String firstName;
+	private String LastName;
+	private String identificationNo;
+	private String taxIdentificationNo;
+	private String donorAccountNo;
+	private String donorAccountName;
+	private String donorBankCode;
+	private Integer donationAmount;
+	private Date createdDate;
+	
 
+
+	public Date getCreatedDate()
+	{
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate)
+	{
+		this.createdDate = createdDate;
+	}
 
 	public String getFirstName()
 	{

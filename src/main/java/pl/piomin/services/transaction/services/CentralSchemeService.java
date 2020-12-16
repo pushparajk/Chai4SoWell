@@ -9,6 +9,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,12 +55,14 @@ import pl.piomin.services.transaction.model.IndividualDisbursement;
 import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateContract;
 import pl.piomin.services.transaction.model.StateFundAllocation;
+import pl.piomin.services.transaction.model.TransferModel;
 import pl.piomin.services.transaction.repository.BankRepository;
 import pl.piomin.services.transaction.repository.CentralSchemeRepository;
 import pl.piomin.services.transaction.repository.DonationRepository;
 import pl.piomin.services.transaction.repository.IndividualFundDisbursementRepository;
 import pl.piomin.services.transaction.repository.StateFundAllocationRepository;
 import pl.piomin.services.transaction.repository.StateRepository;
+import pl.piomin.services.transaction.utils.TransactionContants;
 
 @Service
 public class CentralSchemeService
@@ -213,6 +216,7 @@ public class CentralSchemeService
 		String address = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
 		int disbursementAmount = newFundAllocationModel.getSanctionedAmount();
+		newFundAllocationModel.setCreatedDate(new Date());
 		System.out.println("Inside disburseAmountToState address = " + address);
 		CentralContract actualContract;
 		boolean status = true;
@@ -233,7 +237,7 @@ public class CentralSchemeService
 			e.printStackTrace();
 			status = false;
 		}
-
+		newFundAllocationModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 		StateFundAllocation stateFundAllocation = stateFundAllocationRepository.save(newFundAllocationModel);
 		Optional<Contract> findById = centralSchemeRepository.findById(address);
 		if (findById.isPresent())
@@ -241,6 +245,13 @@ public class CentralSchemeService
 			findById.get().setSchemeBalanceAmount(findById.get().getSchemeBalanceAmount() - disbursementAmount);
 			centralSchemeRepository.save(findById.get());
 		}
+		TransferModel transferModel = new TransferModel();
+		transferModel.setAmount(newFundAllocationModel.getSanctionedAmount());
+		transferModel.setFromAccount(TransactionContants.CENTER_ACCOUNT);
+		transferModel.setToAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setCurrency(TransactionContants.CURRENCY);
+		String fundTransfer = fFDCService.FundTransfer(transferModel);
+		
 		return stateFundAllocation;
 	}
 
@@ -280,6 +291,7 @@ public class CentralSchemeService
 		String accountNumber = newDisbursementModel.getAccountNumber();
 		String identificationNumber = newDisbursementModel.getIdentificationNumber();
 		int disbursementAmount = newDisbursementModel.getDisbursementAmount();
+		newDisbursementModel.setCreatedDate(new Date());
 		// TODO Auto-generated method stub
 		System.out.println("Inside disburseAmountToIndividual address = " + stateAddress);
 		boolean status = true;
@@ -294,6 +306,7 @@ public class CentralSchemeService
 			System.out.println("disbursementContract is valid =" + disbursementContract.isValid());
 			System.out.println("disbursementContract  address =" + disbursementContract.getContractAddress());
 			newDisbursementModel.setDisbursementAddress(disbursementContract.getContractAddress());
+			newDisbursementModel.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 			/* Later add the code for deploying the individual disbursement contract */
 		}
 		catch (Exception e)
@@ -309,6 +322,13 @@ public class CentralSchemeService
 			findById.get().setSchemeBalanceAmount(findById.get().getSanctionedAmount() - disbursementAmount);
 			stateFundAllocationRepository.save(findById.get());
 		}
+		//FFDC call for fund transfer
+		TransferModel transferModel = new TransferModel();
+		transferModel.setAmount(newDisbursementModel.getDisbursementAmount());
+		transferModel.setFromAccount(TransactionContants.CENTER_ACCOUNT);
+		transferModel.setToAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setCurrency(TransactionContants.CURRENCY);
+		String fundTransfer = fFDCService.FundTransfer(transferModel);
 		return individualDisbursement;
 	}
 
@@ -545,17 +565,9 @@ public class CentralSchemeService
 		return individualFundDisbursementRepository.findAll();
 	}
 
-	public AccountCreationResponse getAccountNumber(IndividualDisbursement newDisbursementModel)
+	public AccountCreationResponse createCustomer(IndividualDisbursement newDisbursementModel)
 	{
-		IndividualDisbursement stateContract = new IndividualDisbursement();
-		stateContract.setIdentificationNumber(newDisbursementModel.getIdentificationNumber());
-		Optional<IndividualDisbursement> findOne = individualFundDisbursementRepository.findOne(Example.of(stateContract));
-		if (findOne.isPresent())
-		{
-			AccountCreationResponse accCreationResponse = new AccountCreationResponse();
-			accCreationResponse.setAccountId(findOne.get().getAccountNumber());
-			return accCreationResponse;
-		}
+
 		Customer customer = new Customer();
 		Identification identification = new Identification();
 		identification.setId(newDisbursementModel.getIdentificationNumber());
@@ -564,6 +576,12 @@ public class CentralSchemeService
 		customer.setLastName(newDisbursementModel.getLastName());
 		Customer createCustomer = fFDCService.createCustomer(customer); //FFDC Customer create
 		return fFDCService.createAccount(createCustomer); //FFDC Account create
+	}
+	
+	public String checkCustomer(IndividualDisbursement newDisbursementModel)
+	{
+
+		return fFDCService.checkCustomer(newDisbursementModel); //FFDC Customer create
 	}
 
 	public IndividualDisbursement getDisbursementDetails(String newDisbursementModel)
@@ -596,6 +614,7 @@ public class CentralSchemeService
 		String donorAccountName = newDonationModel.getDonorAccountName();
 		String donorBankCode = newDonationModel.getDonorBankCode();
 		int donationAmount = newDonationModel.getDonationAmount();
+		newDonationModel.setCreatedDate(new Date());
 
 		List<byte[]> inputParams = new ArrayList<>();
 		//inputParams.add(stringToBytes32(centralAddress).getValue());
@@ -629,6 +648,77 @@ public class CentralSchemeService
 	public List<DonationModel> getDonationList()
 	{
 		return donationRepository.findAll();
+	}
+	
+	public String verifyStateContract(String stateAddress)
+	{
+		
+		Optional<StateFundAllocation> stateFund = stateFundAllocationRepository.findById(stateAddress);
+		if (stateFund.isPresent())
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			stateFund.get().setContractStatus(status);
+			stateFundAllocationRepository.save(stateFund.get());
+			return status;
+		}
+		return null;
+	}
+	
+	public String verifyIndividualDisburementContract(String disbursementAddress)
+	{
+		
+		Optional<IndividualDisbursement> individualDisbursement = individualFundDisbursementRepository.findById(disbursementAddress);
+		if (individualDisbursement.isPresent())
+		{
+		// Verify the individualDisbursement with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			individualDisbursement.get().setContractStatus(status);
+			individualFundDisbursementRepository.save(individualDisbursement.get());
+			return status;
+		}
+		return null;
+	}
+	
+	public String verifyAllStateContract()
+	{
+		StateFundAllocation  stateFundAllocation = new StateFundAllocation();
+		stateFundAllocation.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
+		List<StateFundAllocation> listContract = stateFundAllocationRepository.findAll(Example.of(stateFundAllocation));
+		for(StateFundAllocation stateFund : listContract) 
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			stateFund.setContractStatus(status);
+			stateFundAllocationRepository.save(stateFund);
+			return status;
+		}
+		return null;
+	}
+	
+	
+	public String verifyAllIndividualContract()
+	{
+		IndividualDisbursement  individualDisbursement = new IndividualDisbursement();
+		individualDisbursement.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
+		List<IndividualDisbursement> listContract = individualFundDisbursementRepository.findAll(Example.of(individualDisbursement));
+		for(IndividualDisbursement individualDisburse : listContract) 
+		{
+		// Verify the stateFund with contract in ethereum
+		//	ToDo
+		//
+			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			individualDisburse.setContractStatus(status);
+			individualFundDisbursementRepository.save(individualDisburse);
+			return status;
+		}
+		return null;
 	}
 
 }

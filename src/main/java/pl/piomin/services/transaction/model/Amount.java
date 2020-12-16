@@ -2,9 +2,14 @@ package pl.piomin.services.transaction.model;
 
 public class Amount
 {
-	public String currency;
-	public int amount;
+	private  String currency;
+	private  int amount;
 
+	public Amount(String currency, int amount)
+	{
+		this.currency = currency;
+		this.amount = amount;
+	}
 	public String getCurrency()
 	{
 		return currency;

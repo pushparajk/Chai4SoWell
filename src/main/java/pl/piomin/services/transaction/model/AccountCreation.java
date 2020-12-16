@@ -2,11 +2,11 @@ package pl.piomin.services.transaction.model;
 
 public class AccountCreation
 {
-	public String customerId;
-	public String branchCode;
-	public String productId;
-	public String accountOwnership;
-	public AccountAdditionalDetails accountAdditionalDetails;
+	private String customerId;
+	private String branchCode;
+	private String productId;
+	private String accountOwnership;
+	private AccountAdditionalDetails accountAdditionalDetails;
 
 	public String getCustomerId()
 	{

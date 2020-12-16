@@ -4,12 +4,12 @@ import java.util.List;
 
 public class FinancialPosting
 {
-	public boolean forcePostIndicator;
-	public List<PostingEntry> postingEntries;
-	public String sourceBranchCode;
-	public String sourceId;
-	public String transactionReference;
-	public String valueDate;
+	private boolean forcePostIndicator;
+	private List<PostingEntry> postingEntries;
+	private String sourceBranchCode;
+	private String sourceId;
+	private String transactionReference;
+	private String valueDate;
 
 	public boolean isForcePostIndicator()
 	{

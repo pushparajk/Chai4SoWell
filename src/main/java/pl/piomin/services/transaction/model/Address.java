@@ -2,15 +2,15 @@ package pl.piomin.services.transaction.model;
 
 public class Address
 {
-	public String addressType;
-	public String country;
-	public String line1;
-	public String line2;
-	public String line3;
-	public String line4;
-	public String line5;
-	public String postalCode;
-	public String buildingNumber;
+	private String addressType;
+	private String country;
+	private String line1;
+	private String line2;
+	private String line3;
+	private String line4;
+	private String line5;
+	private String postalCode;
+	private String buildingNumber;
 
 	public String getAddressType()
 	{
