@@ -27,7 +27,7 @@ import pl.piomin.services.transaction.model.StateFundAllocation;
 import pl.piomin.services.transaction.services.CentralSchemeService;
 
 
-@CrossOrigin 
+@CrossOrigin
 @RestController
 @RequestMapping("/scheme")
 public class CentralContractController {
@@ -38,7 +38,7 @@ public class CentralContractController {
 
     @Autowired
     CentralSchemeService service;
-    
+    //comment added
 	@PostMapping(path = "/createCentralScheme")
     public Contract createContract(@RequestBody Contract newContract) throws Exception {
 		System.out.println("Inside createCentralScheme()");
