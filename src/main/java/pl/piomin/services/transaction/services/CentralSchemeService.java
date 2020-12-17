@@ -691,7 +691,7 @@ public class CentralSchemeService
 		return null;
 	}
 	
-	public String verifyIndividualDisburementContract(String disbursementAddress)
+	public IndividualDisbursement verifyIndividualDisburementContract(String disbursementAddress)
 	{
 		
 		Optional<IndividualDisbursement> individualDisbursement = individualFundDisbursementRepository.findById(disbursementAddress);
@@ -716,7 +716,7 @@ public class CentralSchemeService
 			System.out.println("status = "+status);
 			individualDisbursement.get().setContractStatus(status);
 			individualFundDisbursementRepository.save(individualDisbursement.get());
-			return status;
+			return individualDisbursement.get();
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -793,13 +793,13 @@ public class CentralSchemeService
 			disbursementAddress=individualDisburse.getDisbursementAddress();
 			DisbursementContract disbursementContract = DisbursementContract.load(disbursementAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
 			onchain_disbursementAmount = disbursementContract.getDisbursementAmount().send().intValue();
-			System.out.println("offchain_disbursementAmount = "+offchain_disbursementAmount+" onchain_disbursementAmount =  "+onchain_disbursementAmount);
+			//System.out.println("offchain_disbursementAmount = "+offchain_disbursementAmount+" onchain_disbursementAmount =  "+onchain_disbursementAmount);
 			if(offchain_disbursementAmount==onchain_disbursementAmount) {
 				status=TransactionContants.ContractStatus.VERIFIED.name();
 			}else {
 				status=TransactionContants.ContractStatus.VERIFY_FAILED.name();
 			}
-			System.out.println("status = "+status);
+			//System.out.println("status = "+status);
 			individualDisbursement.setContractStatus(status);
 			individualFundDisbursementRepository.save(individualDisbursement);
 			return status;

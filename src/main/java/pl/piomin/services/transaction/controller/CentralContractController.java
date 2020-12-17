@@ -184,7 +184,7 @@ public class CentralContractController {
 	}
 	
 	@GetMapping(value = "/verifyIndividualContract/{disbursementAddress}")
-	public String verifyIndividualContract(@PathVariable("disbursementAddress") String disbursementAddress)
+	public IndividualDisbursement verifyIndividualContract(@PathVariable("disbursementAddress") String disbursementAddress)
 	{
 		return service.verifyIndividualDisburementContract(disbursementAddress);
 	}
