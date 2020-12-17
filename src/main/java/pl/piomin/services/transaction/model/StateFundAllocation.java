@@ -16,13 +16,11 @@ public class StateFundAllocation {
 	private String centralAddress; 
 	@NotNull
 	private Integer stateId;
-	@NotNull
 	private String homeName;
 	@NotNull
 	private Integer sanctionedAmount;
 	private Integer schemeBalanceAmount;
 	private Integer returnedAmount;
-	@NotNull
 	private String schemeName;
 	private String contractStatus;
 	private Date createdDate;

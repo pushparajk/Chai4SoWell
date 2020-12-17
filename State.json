@@ -1,0 +1,36 @@
+{"_id":"5cb97ee9063d870004072f05","homeName":"Andhra Pradesh","stateId":1, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1bf054faf470004267350","homeName":"Arunachal Pradesh","stateId":2, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc163ac3b903000042597cf","homeName":"Assam","stateId":3, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc2ff1163f5d10004783ce5","homeName":"Bihar","stateId":4, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1674b3b903000042597d0","homeName":"Chhattisgarh","stateId":5, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc31046bcf1090004223269","homeName":"Goa","stateId":6, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1b4114faf47000426734e","homeName":"Gujarat","stateId":7, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d5ce4890bb0004bed4e4","homeName":"Haryana","stateId":8, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d4694890bb0004bed4e0","homeName":"Himachal Pradesh","stateId":9, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc73a2b56ddb30004b04e39","homeName":"Jharkhand","stateId":10, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d4c04890bb0004bed4e1","homeName":"Karnataka","stateId":11, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc71b00d47f3600042d801f","homeName":"Kerala","stateId":12, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d53c4890bb0004bed4e2","homeName":"Madhya Pradesh","stateId":13, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc737b756ddb30004b04e38","homeName":"Maharashtra","stateId":14, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d5a04890bb0004bed4e3","homeName":"Manipur","stateId":15, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1bddf4faf47000426734f","homeName":"Meghalaya","stateId":16, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cb97f58063d870004072f06","homeName":"Mizoram","stateId":17, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc0c3becb3acf00042b86fb","homeName":"Nagaland","stateId":18, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d6284890bb0004bed4e5","homeName":"Odisha","stateId":29, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1364db910d5000413b1d7","homeName":"Punjab","stateId":20, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cb97ee9063d870004071f05","homeName":"Rajasthan","stateId":21, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1bf054faf470004261350","homeName":"Sikkim","stateId":22, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc163ac3b903000042517cf","homeName":"Tamil Nadu","stateId":23, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc2ff1163f5d10004781ce5","homeName":"Telangana","stateId":24, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1674b3b903000042517d0","homeName":"Tripura","stateId":25, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc31046bcf1090004221269","homeName":"Uttar Pradesh","stateId":26, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1b4114faf47000426134e","homeName":"Uttarakhand","stateId":27, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d5ce4890bb0004be14e4","homeName":"West Bengal","stateId":28, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d4694890bb0004be14e0","homeName":"Andaman and Nicobar Islands","stateId":29, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc73a2b56ddb30004b01e39","homeName":"Chandigarh","stateId":30, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d4c04890bb0004be14e1","homeName":"Dadra & Nagar Haveli and Daman & Diu","stateId":31, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc71b00d47f3600042d101f","homeName":"Delhi","stateId":32, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d53c4890bb0004be14e2","homeName":"Jammu and Kashmir","stateId":33, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc737b756ddb30004b01e38","homeName":"Lakshadweep","stateId":34, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc5d5a04890bb0004be14e3","homeName":"Puducherry","stateId":35, "_class" : "pl.piomin.services.transaction.model.State"}
+{"_id":"5cc1bddf4faf47000426134f","homeName":"Ladakh","stateId":36, "_class" : "pl.piomin.services.transaction.model.State"}

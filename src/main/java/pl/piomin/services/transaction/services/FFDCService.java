@@ -27,6 +27,7 @@ import pl.piomin.services.transaction.model.AccountCreationResponse;
 import pl.piomin.services.transaction.model.Address;
 import pl.piomin.services.transaction.model.Amount;
 import pl.piomin.services.transaction.model.BaseEquivalent;
+import pl.piomin.services.transaction.model.CreateCustomerRequest;
 import pl.piomin.services.transaction.model.Customer;
 import pl.piomin.services.transaction.model.CustomerResponse;
 import pl.piomin.services.transaction.model.EmailAddress;
@@ -34,6 +35,7 @@ import pl.piomin.services.transaction.model.FatcaDetails;
 import pl.piomin.services.transaction.model.FinancialPosting;
 import pl.piomin.services.transaction.model.Identification;
 import pl.piomin.services.transaction.model.IndividualDisbursement;
+import pl.piomin.services.transaction.model.MLResponse;
 import pl.piomin.services.transaction.model.OAuthTokenResponse;
 import pl.piomin.services.transaction.model.PhoneNumber;
 import pl.piomin.services.transaction.model.PostingEntry;
@@ -43,7 +45,6 @@ import pl.piomin.services.transaction.utils.TransactionContants;
 @Component
 public class FFDCService
 {
-
 
 	private static final String DEBITCREDIT = "DEBITCREDIT";
 
@@ -62,7 +63,6 @@ public class FFDCService
 	private static final String DEBIT = "DEBIT";
 
 	private static final String CREDIT = "CREDIT";
-
 
 	/** The rest template. */
 	@Autowired
@@ -118,23 +118,37 @@ public class FFDCService
 		return response.getBody();
 	}
 
-	
-	public String checkCustomer(IndividualDisbursement individualDisbursement){
-		 DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy"); 
+	public MLResponse checkCustomer(IndividualDisbursement individualDisbursement)
+	{
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE.toString());
-		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
 		map.add("gender", individualDisbursement.getGender());
 		map.add("dob", dateFormat.format(individualDisbursement.getDob()));
 		map.add("is_employed", individualDisbursement.getIsEmployed());
 		map.add("income", individualDisbursement.getIncome());
 		map.add("amount", individualDisbursement.getDisbursementAmount().toString());
-		map.add("txn_date",  dateFormat.format(new Date()));
+		map.add("txn_date", dateFormat.format(new Date()));
 		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		ResponseEntity<String> response = restTemplate.exchange(TransactionContants.ML_URL, HttpMethod.POST, entity, String.class);
-		return response.getBody();
+		String body = response.getBody();
+		try
+		{
+			body=body.substring(1, body.length() - 2).replace("\\", "");
+			return new ObjectMapper().readValue(body, MLResponse.class);
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		return null;
+
 	}
-	public Customer createCustomer(Customer insertcustomer)
+
+	public Customer createCustomer(CreateCustomerRequest insertcustomer)
 	{
 
 		HttpHeaders headers = new HttpHeaders();
@@ -217,7 +231,7 @@ public class FFDCService
 		PostingEntry postingEntry = new PostingEntry();
 		List<PostingEntry> postingEntries = new ArrayList<>();
 		//Debit
-		postingEntry.setAccountId(transferModel.getToAccount()); 
+		postingEntry.setAccountId(transferModel.getToAccount());
 		postingEntry.setExchangeRate(1);
 		postingEntry.setAmount(new Amount(transferModel.getCurrency(), transferModel.getAmount()));
 		postingEntry.setBaseEquivalent(new BaseEquivalent(transferModel.getCurrency(), transferModel.getAmount()));
@@ -227,7 +241,7 @@ public class FFDCService
 		postingEntry.setPostingType(C00);
 		postingEntry.setNarrative(FUND_TRANSFER);
 		postingEntries.add(postingEntry);
-		
+
 		//Credit
 		postingEntry = new PostingEntry();
 		postingEntry.setAccountId(transferModel.getFromAccount());
@@ -240,24 +254,25 @@ public class FFDCService
 		postingEntry.setPostingType(C01);
 		postingEntry.setNarrative(FUND_TRANSFER);
 		postingEntries.add(postingEntry);
-		
+
 		financialPosting.setPostingEntries(postingEntries);
 
 		return financialPosting;
 	}
-	private Customer setCustomer(Customer insertcustomer)
+
+	private Customer setCustomer(CreateCustomerRequest createCustomerRequest)
 	{
 		Customer customer = new Customer();
-		customer.setFirstName(insertcustomer.getFirstName());
-		customer.setLastName(insertcustomer.getLastName());
+		customer.setFirstName(createCustomerRequest.getFirstName());
+		customer.setLastName(createCustomerRequest.getLastName());
 		customer.setBranchCode(TransactionContants.BRANCH_CODE);
 		customer.setTitle("Mr");
-		customer.setDateOfBirth("1989-05-01");
-		customer.setGender("MALE");
-		customer.setCountryOfResidency("US");
+		customer.setDateOfBirth(createCustomerRequest.getDateOfBirth());
+		customer.setGender(createCustomerRequest.getGender());
+		customer.setCountryOfResidency(createCustomerRequest.getCountry());
 
 		Identification identification = new Identification();
-		identification.setId(insertcustomer.getIdentification().getId());
+		identification.setId("123456789");
 		identification.setType("CCPT");
 
 		customer.setIdentification(identification);
@@ -265,14 +280,14 @@ public class FFDCService
 
 		Address addres = new Address();
 		addres.setAddressType("BUSINESS");
-		addres.setBuildingNumber("109");
-		addres.setCountry("US");
-		addres.setLine1("Starbucks Branch");
-		addres.setLine2("201 Powell Street");
-		addres.setLine3(EMPTY);
-		addres.setLine4("San Francisco");
-		addres.setLine5("CA");
-		addres.setPostalCode("94102");
+		addres.setBuildingNumber(createCustomerRequest.getAddressLine1());
+		addres.setCountry(createCustomerRequest.getCountry());
+		addres.setLine1(createCustomerRequest.getAddressLine1());
+		addres.setLine2(createCustomerRequest.getAddressLine2());
+		addres.setLine3(createCustomerRequest.getAddressLine3());
+		addres.setLine4(createCustomerRequest.getAddressLine4());
+		addres.setLine5(createCustomerRequest.getAddressLine5());
+		addres.setPostalCode(createCustomerRequest.getPostalCode());
 		List<Address> addressList = new ArrayList<>();
 		addressList.add(addres);
 		customer.setAddresses(addressList);
@@ -292,9 +307,9 @@ public class FFDCService
 		customer.setEmailAddresses(emailAddressList);
 
 		FatcaDetails fatcaDetails = new FatcaDetails();
-		fatcaDetails.setTin("234581");
-		fatcaDetails.setUSResident(true);
-		fatcaDetails.setUSTaxResident(true);
+		fatcaDetails.setTin(createCustomerRequest.getTin());
+		fatcaDetails.setUSResident(createCustomerRequest.isUSResident());
+		fatcaDetails.setUSTaxResident(createCustomerRequest.isUSTaxResident());
 
 		customer.setFatcaDetails(fatcaDetails);
 		return customer;

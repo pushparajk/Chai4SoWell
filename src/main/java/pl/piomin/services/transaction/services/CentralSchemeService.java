@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -46,12 +45,13 @@ import pl.piomin.services.transaction.model.Bank;
 import pl.piomin.services.transaction.model.CentralContract;
 import pl.piomin.services.transaction.model.Contract;
 import pl.piomin.services.transaction.model.ContractSummary;
+import pl.piomin.services.transaction.model.CreateCustomerRequest;
 import pl.piomin.services.transaction.model.Customer;
 import pl.piomin.services.transaction.model.DisbursementContract;
 import pl.piomin.services.transaction.model.DonationContract;
 import pl.piomin.services.transaction.model.DonationModel;
-import pl.piomin.services.transaction.model.Identification;
 import pl.piomin.services.transaction.model.IndividualDisbursement;
+import pl.piomin.services.transaction.model.MLResponse;
 import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateContract;
 import pl.piomin.services.transaction.model.StateFundAllocation;
@@ -209,6 +209,11 @@ public class CentralSchemeService
 		newFundAllocationModel.setSanctionedAmount(balanceAmount);
 		return newFundAllocationModel;
 	}
+	
+	public String insertStateList(List<State> state){
+		stateRepository.saveAll(state);
+		return "SUCCESS";
+	}
 
 	public StateFundAllocation disburseAmountToState(StateFundAllocation newFundAllocationModel)
 	{
@@ -216,6 +221,13 @@ public class CentralSchemeService
 		String address = newFundAllocationModel.getCentralAddress();
 		int stateId = newFundAllocationModel.getStateId();
 		int disbursementAmount = newFundAllocationModel.getSanctionedAmount();
+		State state = new State();
+		state.setStateId(stateId);
+		Optional<State> stateRec = stateRepository.findOne(Example.of(state));
+		List<State> findAll = stateRepository.findAll();
+		if(stateRec.isPresent()){
+			newFundAllocationModel.setHomeName(stateRec.get().getHomeName());
+		}
 		newFundAllocationModel.setCreatedDate(new Date());
 		System.out.println("Inside disburseAmountToState address = " + address);
 		CentralContract actualContract;
@@ -229,7 +241,7 @@ public class CentralSchemeService
 			StateContract stateContract = StateContract.deploy(web3j, credentials, BigInteger.valueOf(501_000L), BigInteger.valueOf(501_000L), BigInteger.valueOf(disbursementAmount), address, BigInteger.valueOf(stateId)).send();
 			newFundAllocationModel.setStateContractAddress(stateContract.getContractAddress());
 			newFundAllocationModel.setCentralAddress(address);
-			newFundAllocationModel.setSchemeBalanceAmount(actualContract.getSchemeBalanceAmount().send().intValue());
+			newFundAllocationModel.setSchemeBalanceAmount(newFundAllocationModel.getSanctionedAmount());
 			
 		}
 		catch (Exception e)
@@ -316,11 +328,11 @@ public class CentralSchemeService
 		}
 
 		IndividualDisbursement individualDisbursement = individualFundDisbursementRepository.save(newDisbursementModel);
-		Optional<StateFundAllocation> findById = stateFundAllocationRepository.findById(stateAddress);
-		if (findById.isPresent())
+		Optional<StateFundAllocation> stateFundAllocation = stateFundAllocationRepository.findById(stateAddress);
+		if (stateFundAllocation.isPresent())
 		{
-			findById.get().setSchemeBalanceAmount(findById.get().getSanctionedAmount() - disbursementAmount);
-			stateFundAllocationRepository.save(findById.get());
+			stateFundAllocation.get().setSchemeBalanceAmount(stateFundAllocation.get().getSchemeBalanceAmount() - disbursementAmount);
+			stateFundAllocationRepository.save(stateFundAllocation.get());
 		}
 		//FFDC call for fund transfer
 		TransferModel transferModel = new TransferModel();
@@ -336,7 +348,8 @@ public class CentralSchemeService
 	{
 		IndividualDisbursement stateContract = new IndividualDisbursement();
 		stateContract.setStateContractAddress(stateContractAddress);
-		return individualFundDisbursementRepository.findAll(Example.of(stateContract), Sort.by(Sort.Direction.ASC, "disbursementAmount"));
+		List<IndividualDisbursement> findAll = individualFundDisbursementRepository.findAll(Example.of(stateContract), Sort.by(Sort.Direction.ASC, "disbursementAmount"));
+		return findAll;
 	}
 
 	public Contract reverseBalanceAmountFromState(StateFundAllocation newFundAllocationModel)
@@ -427,7 +440,6 @@ public class CentralSchemeService
 
 	public List<StateFundAllocation> getStateSchemeDetailsByCentralContract(String centralContractAddress)
 	{
-		ExampleMatcher expMatcher = ExampleMatcher.matchingAll().withMatcher("centralAddress", ExampleMatcher.GenericPropertyMatchers.contains());
 		StateFundAllocation stateContract = new StateFundAllocation();
 		stateContract.setCentralAddress(centralContractAddress);
 		return stateFundAllocationRepository.findAll(Example.of(stateContract), Sort.by(Sort.Direction.ASC, "stateId"));
@@ -474,7 +486,7 @@ public class CentralSchemeService
 		String schemeName = newContract.getSchemeName();
 		int schemeAmount = newContract.getSchemeAmount();
 		newContract.setSchemeBalanceAmount(schemeAmount);
-		String schemeDetails = newContract.getSchemeDetails(); // THis value to be storead in local DB
+		newContract.setCreatedDate(new Date());
 		List<byte[]> inputParams = new ArrayList<>();
 		inputParams.add(stringToBytes32(schemeName).getValue());
 		inputParams.add(stringToBytes32(accountNumber).getValue());
@@ -565,23 +577,18 @@ public class CentralSchemeService
 		return individualFundDisbursementRepository.findAll();
 	}
 
-	public AccountCreationResponse createCustomer(IndividualDisbursement newDisbursementModel)
+	public AccountCreationResponse createCustomer(CreateCustomerRequest createCustomerRequest)
 	{
 
-		Customer customer = new Customer();
-		Identification identification = new Identification();
-		identification.setId(newDisbursementModel.getIdentificationNumber());
-		customer.setIdentification(identification);
-		customer.setFirstName(newDisbursementModel.getFirstName());
-		customer.setLastName(newDisbursementModel.getLastName());
-		Customer createCustomer = fFDCService.createCustomer(customer); //FFDC Customer create
+
+		Customer createCustomer = fFDCService.createCustomer(createCustomerRequest); //FFDC Customer create
 		return fFDCService.createAccount(createCustomer); //FFDC Account create
 	}
 	
-	public String checkCustomer(IndividualDisbursement newDisbursementModel)
+	public MLResponse checkCustomer(IndividualDisbursement newDisbursementModel)
 	{
 
-		return fFDCService.checkCustomer(newDisbursementModel); //FFDC Customer create
+		return fFDCService.checkCustomer(newDisbursementModel); 
 	}
 
 	public IndividualDisbursement getDisbursementDetails(String newDisbursementModel)

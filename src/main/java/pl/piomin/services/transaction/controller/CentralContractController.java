@@ -19,8 +19,10 @@ import pl.piomin.services.transaction.model.AccountCreationResponse;
 import pl.piomin.services.transaction.model.Bank;
 import pl.piomin.services.transaction.model.Contract;
 import pl.piomin.services.transaction.model.ContractSummary;
+import pl.piomin.services.transaction.model.CreateCustomerRequest;
 import pl.piomin.services.transaction.model.DonationModel;
 import pl.piomin.services.transaction.model.IndividualDisbursement;
+import pl.piomin.services.transaction.model.MLResponse;
 import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateFundAllocation;
 import pl.piomin.services.transaction.services.CentralSchemeService;
@@ -72,6 +74,14 @@ public class CentralContractController {
 		System.out.println("Inside getStateList() in controller");
 		return service.getStateList();
 	}
+	
+    
+    @PostMapping(path = "/stateList")
+    public String insertStateList( @RequestBody List<State> state) throws Exception {
+		System.out.println("Inside disburseAmountToState()");
+    	return service.insertStateList(state);
+    }
+    
 
 	@GetMapping(value = "/getBankList")
 	public List<Bank> getBankDetails()
@@ -137,14 +147,14 @@ public class CentralContractController {
     }
 
 	@PostMapping(value = "/CreateCustomer")
-	public AccountCreationResponse createCustomer(@RequestBody IndividualDisbursement individualDisbursement)
+	public AccountCreationResponse createCustomer(@RequestBody CreateCustomerRequest createCustomerRequest)
 	{
 		System.out.println("Inside createCustomer() in controller");
-		return service.createCustomer(individualDisbursement);
+		return service.createCustomer(createCustomerRequest);
 	}
 	
 	@PostMapping(value = "/CheckCustomer")
-	public String checkCustomer(@RequestBody IndividualDisbursement individualDisbursement)
+	public MLResponse checkCustomer(@RequestBody IndividualDisbursement individualDisbursement)
 	{
 		System.out.println("Inside checkCustomer() in controller");
 		return service.checkCustomer(individualDisbursement);
