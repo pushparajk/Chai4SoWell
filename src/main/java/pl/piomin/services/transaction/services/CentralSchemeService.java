@@ -63,6 +63,7 @@ import pl.piomin.services.transaction.repository.IndividualFundDisbursementRepos
 import pl.piomin.services.transaction.repository.StateFundAllocationRepository;
 import pl.piomin.services.transaction.repository.StateRepository;
 import pl.piomin.services.transaction.utils.TransactionContants;
+import pl.piomin.services.transaction.utils.TransactionContants.ContractStatus;
 
 @Service
 public class CentralSchemeService
@@ -657,7 +658,7 @@ public class CentralSchemeService
 		return donationRepository.findAll();
 	}
 	
-	public String verifyStateContract(String stateAddress)
+	public StateFundAllocation verifyStateContract(String stateAddress)
 	{
 		
 		Optional<StateFundAllocation> stateFund = stateFundAllocationRepository.findById(stateAddress);
@@ -666,27 +667,66 @@ public class CentralSchemeService
 		// Verify the stateFund with contract in ethereum
 		//	ToDo
 		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			int offchain_allocateAmount=0;
+			int offchain_balanceAmount=0;
+			int onchain_allocateAmount=0;
+			int onchain_balanceAmount =0;
+			String status=ContractStatus.NOT_VERIFIED.name();
+			try {
+			offchain_allocateAmount=stateFund.get().getSanctionedAmount();
+			offchain_balanceAmount=stateFund.get().getSchemeBalanceAmount();
+			System.out.println("offchain_allocateAmount = "+offchain_allocateAmount+" offchain_balanceAmount = "+offchain_balanceAmount );
+			StateContract stateContract = StateContract.load(stateAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+
+			onchain_allocateAmount = stateContract.getSchemeSanctionedAmount().send().intValue();
+			onchain_balanceAmount = stateContract.getBalanceAmount().send().intValue();
+			System.out.println("onchain_allocateAmount = "+onchain_allocateAmount+" onchain_balanceAmount = "+onchain_balanceAmount );
+			if((offchain_allocateAmount==onchain_allocateAmount) && (offchain_balanceAmount==onchain_balanceAmount)) {
+				status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			}else {
+				status=TransactionContants.ContractStatus.VERIFY_FAILED.name(); //temp made all are VERIFIED
+			}
 			stateFund.get().setContractStatus(status);
 			stateFundAllocationRepository.save(stateFund.get());
-			return status;
+			System.out.println("status = "+status);
+
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			return stateFund.get();
 		}
 		return null;
 	}
 	
-	public String verifyIndividualDisburementContract(String disbursementAddress)
+	public IndividualDisbursement verifyIndividualDisburementContract(String disbursementAddress)
 	{
 		
 		Optional<IndividualDisbursement> individualDisbursement = individualFundDisbursementRepository.findById(disbursementAddress);
+		int offchain_disbursementAmount=0;
+		int onchain_disbursementAmount=0;
+		String status=ContractStatus.NOT_VERIFIED.name();
 		if (individualDisbursement.isPresent())
 		{
 		// Verify the individualDisbursement with contract in ethereum
 		//	ToDo
 		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			try {
+			offchain_disbursementAmount=individualDisbursement.get().getDisbursementAmount();
+			DisbursementContract disbursementContract = DisbursementContract.load(disbursementAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			onchain_disbursementAmount = disbursementContract.getDisbursementAmount().send().intValue();
+			System.out.println("offchain_disbursementAmount = "+offchain_disbursementAmount+" onchain_disbursementAmount =  "+onchain_disbursementAmount);
+			if(offchain_disbursementAmount==onchain_disbursementAmount) {
+				status=TransactionContants.ContractStatus.VERIFIED.name();
+			}else {
+				status=TransactionContants.ContractStatus.VERIFY_FAILED.name();
+			}
+			System.out.println("status = "+status);
 			individualDisbursement.get().setContractStatus(status);
 			individualFundDisbursementRepository.save(individualDisbursement.get());
-			return status;
+			return individualDisbursement.get();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -696,14 +736,42 @@ public class CentralSchemeService
 		StateFundAllocation  stateFundAllocation = new StateFundAllocation();
 		stateFundAllocation.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 		List<StateFundAllocation> listContract = stateFundAllocationRepository.findAll(Example.of(stateFundAllocation));
+		int offchain_allocateAmount=0;
+		int offchain_balanceAmount=0;
+		int onchain_allocateAmount=0;
+		int onchain_balanceAmount =0;
+		String stateAddress="";
+		String status=ContractStatus.NOT_VERIFIED.name();
 		for(StateFundAllocation stateFund : listContract) 
 		{
 		// Verify the stateFund with contract in ethereum
-		//	ToDo
-		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+
+			stateAddress=stateFund.getStateContractAddress();
+			try {
+			offchain_allocateAmount=stateFund.getSanctionedAmount();
+			offchain_balanceAmount=stateFund.getSchemeBalanceAmount();
+			//System.out.println("offchain_allocateAmount = "+offchain_allocateAmount+" offchain_balanceAmount = "+offchain_balanceAmount );
+			//System.out.println("stateAddress = "+stateAddress);
+			StateContract stateContract = StateContract.load(stateAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+
+			onchain_allocateAmount = stateContract.getSchemeSanctionedAmount().send().intValue();
+			onchain_balanceAmount = stateContract.getBalanceAmount().send().intValue();
+			
+			//System.out.println("onchain_allocateAmount = "+onchain_allocateAmount+" onchain_balanceAmount = "+onchain_balanceAmount );
+			if((offchain_allocateAmount==onchain_allocateAmount) && (offchain_balanceAmount==onchain_balanceAmount)) {
+				status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
+			}else {
+				status=TransactionContants.ContractStatus.VERIFY_FAILED.name(); //temp made all are VERIFIED
+			}
+			//System.out.println("Status = "+status);
 			stateFund.setContractStatus(status);
 			stateFundAllocationRepository.save(stateFund);
+			
+
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
 			return status;
 		}
 		return null;
@@ -715,14 +783,41 @@ public class CentralSchemeService
 		IndividualDisbursement  individualDisbursement = new IndividualDisbursement();
 		individualDisbursement.setContractStatus(TransactionContants.ContractStatus.NOT_VERIFIED.name());
 		List<IndividualDisbursement> listContract = individualFundDisbursementRepository.findAll(Example.of(individualDisbursement));
+		int offchain_disbursementAmount=0;
+		int onchain_disbursementAmount=0;
+		String status=ContractStatus.NOT_VERIFIED.name();
+		String disbursementAddress="";
+		
 		for(IndividualDisbursement individualDisburse : listContract) 
 		{
 		// Verify the stateFund with contract in ethereum
 		//	ToDo
 		//
-			String status=TransactionContants.ContractStatus.VERIFIED.name(); //temp made all are VERIFIED
-			individualDisburse.setContractStatus(status);
-			individualFundDisbursementRepository.save(individualDisburse);
+			//Start
+			
+			try {
+			offchain_disbursementAmount=individualDisburse.getDisbursementAmount();
+			disbursementAddress=individualDisburse.getDisbursementAddress();
+			DisbursementContract disbursementContract = DisbursementContract.load(disbursementAddress, web3j, credentials, BigInteger.valueOf(510_000L), BigInteger.valueOf(510_000L));
+			onchain_disbursementAmount = disbursementContract.getDisbursementAmount().send().intValue();
+			//System.out.println("offchain_disbursementAmount = "+offchain_disbursementAmount+" onchain_disbursementAmount =  "+onchain_disbursementAmount);
+			if(offchain_disbursementAmount==onchain_disbursementAmount) {
+				status=TransactionContants.ContractStatus.VERIFIED.name();
+			}else {
+				status=TransactionContants.ContractStatus.VERIFY_FAILED.name();
+			}
+			//System.out.println("status = "+status);
+			individualDisbursement.setContractStatus(status);
+			individualFundDisbursementRepository.save(individualDisbursement);
+			return status;
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			//End
+			
+
+
 			return status;
 		}
 		return null;

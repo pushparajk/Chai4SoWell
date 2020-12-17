@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ import pl.piomin.services.transaction.model.StateFundAllocation;
 import pl.piomin.services.transaction.services.CentralSchemeService;
 
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/scheme")
 public class CentralContractController {
@@ -39,7 +40,7 @@ public class CentralContractController {
 
     @Autowired
     CentralSchemeService service;
-    
+    //comment added
 	@PostMapping(path = "/createCentralScheme")
     public Contract createContract(@RequestBody Contract newContract) throws Exception {
 		System.out.println("Inside createCentralScheme()");
@@ -187,13 +188,13 @@ public class CentralContractController {
 		return service.getDonationList();
 	}
 	@GetMapping(value = "/verifyStateContract/{stateAddress}")
-	public String verifyStateContract(@PathVariable("stateAddress") String stateAddress)
+	public StateFundAllocation verifyStateContract(@PathVariable("stateAddress") String stateAddress)
 	{
 		return service.verifyStateContract(stateAddress);
 	}
 	
 	@GetMapping(value = "/verifyIndividualContract/{disbursementAddress}")
-	public String verifyIndividualContract(@PathVariable("disbursementAddress") String disbursementAddress)
+	public IndividualDisbursement verifyIndividualContract(@PathVariable("disbursementAddress") String disbursementAddress)
 	{
 		return service.verifyIndividualDisburementContract(disbursementAddress);
 	}
