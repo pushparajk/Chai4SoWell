@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -170,8 +171,14 @@ public class FFDCService
 			e.printStackTrace();
 		}
 		HttpEntity<String> entity = new HttpEntity<String>(writeValueAsString, headers);
+		try{
 		ResponseEntity<CustomerResponse> response = restTemplate.exchange(TransactionContants.FFDC_CUSTOMER_CREATE, HttpMethod.POST, entity, CustomerResponse.class);
 		customer.setCustomerId(response.getBody().getCustomerId());
+		}
+		catch(HttpStatusCodeException e){
+			e.printStackTrace();
+		}
+		
 		return customer;
 	}
 
@@ -272,7 +279,7 @@ public class FFDCService
 		customer.setCountryOfResidency(createCustomerRequest.getCountry());
 
 		Identification identification = new Identification();
-		identification.setId("123456789");
+		identification.setId("string");
 		identification.setType("CCPT");
 
 		customer.setIdentification(identification);

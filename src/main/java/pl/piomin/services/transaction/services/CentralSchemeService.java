@@ -338,8 +338,8 @@ public class CentralSchemeService
 		//FFDC call for fund transfer
 		TransferModel transferModel = new TransferModel();
 		transferModel.setAmount(newDisbursementModel.getDisbursementAmount());
-		transferModel.setFromAccount(TransactionContants.CENTER_ACCOUNT);
-		transferModel.setToAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setFromAccount(TransactionContants.STATE_ACCOUNT);
+		transferModel.setToAccount(newDisbursementModel.getDisbursementAmount().toString());
 		transferModel.setCurrency(TransactionContants.CURRENCY);
 		String fundTransfer = fFDCService.FundTransfer(transferModel);
 		return individualDisbursement;
@@ -580,10 +580,12 @@ public class CentralSchemeService
 
 	public AccountCreationResponse createCustomer(CreateCustomerRequest createCustomerRequest)
 	{
-
-
 		Customer createCustomer = fFDCService.createCustomer(createCustomerRequest); //FFDC Customer create
-		return fFDCService.createAccount(createCustomer); //FFDC Account create
+		if (createCustomer != null)
+		{
+			return fFDCService.createAccount(createCustomer); //FFDC Account create
+		}
+		return null;
 	}
 	
 	public MLResponse checkCustomer(IndividualDisbursement newDisbursementModel)
