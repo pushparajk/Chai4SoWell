@@ -43,11 +43,14 @@ import org.web3j.protocol.http.HttpService;
 import pl.piomin.services.transaction.model.AccountCreationResponse;
 import pl.piomin.services.transaction.model.Bank;
 import pl.piomin.services.transaction.model.CentralContract;
+import pl.piomin.services.transaction.model.CharityDetail;
 import pl.piomin.services.transaction.model.Contract;
 import pl.piomin.services.transaction.model.ContractSummary;
 import pl.piomin.services.transaction.model.CreateCustomerRequest;
 import pl.piomin.services.transaction.model.Customer;
+import pl.piomin.services.transaction.model.Data;
 import pl.piomin.services.transaction.model.DisbursementContract;
+import pl.piomin.services.transaction.model.DisbursementDetail;
 import pl.piomin.services.transaction.model.DonationContract;
 import pl.piomin.services.transaction.model.DonationModel;
 import pl.piomin.services.transaction.model.IndividualDisbursement;
@@ -56,6 +59,7 @@ import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateContract;
 import pl.piomin.services.transaction.model.StateFundAllocation;
 import pl.piomin.services.transaction.model.TransferModel;
+import pl.piomin.services.transaction.model.TreeResponse;
 import pl.piomin.services.transaction.repository.BankRepository;
 import pl.piomin.services.transaction.repository.CentralSchemeRepository;
 import pl.piomin.services.transaction.repository.DonationRepository;
@@ -339,7 +343,7 @@ public class CentralSchemeService
 		TransferModel transferModel = new TransferModel();
 		transferModel.setAmount(newDisbursementModel.getDisbursementAmount());
 		transferModel.setFromAccount(TransactionContants.STATE_ACCOUNT);
-		transferModel.setToAccount(newDisbursementModel.getDisbursementAmount().toString());
+		transferModel.setToAccount(TransactionContants.CENTER_ACCOUNT);
 		transferModel.setCurrency(TransactionContants.CURRENCY);
 		String fundTransfer = fFDCService.FundTransfer(transferModel);
 		return individualDisbursement;
@@ -567,6 +571,55 @@ public class CentralSchemeService
 		}
 		return null;
 	}
+	
+
+	public TreeResponse getSchemeHierarchyDetails(String centralContractAddress)
+	{
+
+		Optional<Contract> optional = centralSchemeRepository.findById(centralContractAddress);
+		TreeResponse treeResponse = new TreeResponse();
+		if (optional.isPresent())
+		{ 
+			Contract contract = optional.get();
+			Data data = new Data();
+			data.setSchemeAmount(contract.getSchemeAmount());
+			data.setSchemeName(contract.getSchemeName());
+			treeResponse.setData(data);
+			StateFundAllocation stateContract = new StateFundAllocation();
+			stateContract.setCentralAddress(centralContractAddress);
+			List<StateFundAllocation> stateAllotmentDetails = stateFundAllocationRepository.findAll(Example.of(stateContract), Sort.by(Sort.Direction.ASC, "stateId"));
+			List<CharityDetail> charityDetailList = new ArrayList<>();
+			for(StateFundAllocation stateAllotment:stateAllotmentDetails){
+				
+				CharityDetail charityDetail = new CharityDetail();
+				charityDetail.setAllocateAmount(stateAllotment.getSanctionedAmount());
+				charityDetail.setContractStatus(stateAllotment.getContractStatus());
+				charityDetail.setHomeName(stateAllotment.getHomeName());
+				charityDetail.setSchemeBalanceAmount(stateAllotment.getSchemeBalanceAmount());
+				charityDetail.setStateContractAddress(stateAllotment.getStateContractAddress());
+				charityDetailList.add(charityDetail);
+				IndividualDisbursement setDisbursementDetail = new IndividualDisbursement();
+				setDisbursementDetail.setStateContractAddress(stateAllotment.getStateContractAddress());
+				List<DisbursementDetail> disbursementDetailList= new ArrayList<>();
+				charityDetail.setDisbursementDetails(disbursementDetailList);
+				List<IndividualDisbursement> getDisbursementDetailList = individualFundDisbursementRepository.findAll(Example.of(setDisbursementDetail), Sort.by(Sort.Direction.ASC, "disbursementAmount"));
+				for(IndividualDisbursement individualDisbursement : getDisbursementDetailList){
+					
+					DisbursementDetail disbursementDetail = new DisbursementDetail();
+					disbursementDetail.setDisbursementAddress(individualDisbursement.getDisbursementAddress());
+					disbursementDetail.setDisbursementAmount(individualDisbursement.getDisbursementAmount());
+					disbursementDetail.setFirstName(individualDisbursement.getFirstName());
+					disbursementDetail.setLastName(individualDisbursement.getLastName());
+					disbursementDetail.setContractStatus(individualDisbursement.getContractStatus());
+					disbursementDetailList.add(disbursementDetail);
+				}
+			}
+			data.setCharityDetails(Optional.ofNullable(charityDetailList).isPresent()?charityDetailList: new ArrayList<>());
+		}
+		return treeResponse;
+	}
+
+	
 
 	public List<State> getStateList()
 	{

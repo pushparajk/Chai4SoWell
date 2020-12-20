@@ -26,6 +26,7 @@ import pl.piomin.services.transaction.model.IndividualDisbursement;
 import pl.piomin.services.transaction.model.MLResponse;
 import pl.piomin.services.transaction.model.State;
 import pl.piomin.services.transaction.model.StateFundAllocation;
+import pl.piomin.services.transaction.model.TreeResponse;
 import pl.piomin.services.transaction.services.CentralSchemeService;
 
 
@@ -61,13 +62,22 @@ public class CentralContractController {
 		return service.getSchemeSummary();
 	}
 
+	@GetMapping(value = "/getSchemeHierarchyDetails/{centralContractAddress}")
+	public TreeResponse getSchemeHierarchyDetails(@PathVariable("centralContractAddress") String centralContractAddress)
+	{
+		System.out.println("Inside getCentralSchemeDetails() in controller");
+		return service.getSchemeHierarchyDetails(centralContractAddress);
+    }
+
+	
 	@GetMapping(value = "/getCentralSchemeDetails/{centralContractAddress}")
 	public Contract getCentralSchemeDetails(@PathVariable("centralContractAddress") String centralContractAddress)
 	{
 		System.out.println("Inside getCentralSchemeDetails() in controller");
 		return service.getCentralSchemeDetails(centralContractAddress);
     }
-
+	
+	
 
 	@GetMapping(value = "/getCharityHouseList")
 	public List<State> getCharityHouseList()
