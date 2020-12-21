@@ -644,7 +644,25 @@ public class CentralSchemeService
 	public MLResponse checkCustomer(IndividualDisbursement newDisbursementModel)
 	{
 
-		return fFDCService.checkCustomer(newDisbursementModel); 
+		//return fFDCService.checkCustomer(newDisbursementModel);
+		MLResponse mlresponse=	fFDCService.checkCustomer(newDisbursementModel);
+		String pPredictedStatus=mlresponse.getpREDICTED_STATUS();
+		pPredictedStatus=pPredictedStatus.substring(2,pPredictedStatus.indexOf("]")-1);
+		double pscore=Math.round((mlresponse.getcOULDBEFRAUD()*100));
+		mlresponse.setcOULDBEFRAUD(pscore);
+		pscore=Math.round((mlresponse.getfRAUD()*100));
+		mlresponse.setfRAUD(pscore);
+		pscore=Math.round((mlresponse.getnORMAL()*100));
+		mlresponse.setnORMAL(pscore);
+		pscore=Math.round((mlresponse.getsUSPECT()*100));
+		mlresponse.setsUSPECT(pscore);
+
+		System.out.println("pPredictedScore = "+pPredictedStatus);		
+		System.out.println("pscore= "+pscore);
+		mlresponse.setpREDICTED_STATUS(pPredictedStatus);
+		
+		return mlresponse; 
+
 	}
 
 	public IndividualDisbursement getDisbursementDetails(String newDisbursementModel)

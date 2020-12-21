@@ -6,7 +6,7 @@ public class MLResponse
 {
     @JsonProperty("PREDICTED_STATUS") 
     public String pREDICTED_STATUS;
-    @JsonProperty("COULD BE FRAUD") 
+    @JsonProperty("COULD_BE_FRAUD") 
     public double cOULDBEFRAUD;
     @JsonProperty("FRAUD") 
     public double fRAUD;
