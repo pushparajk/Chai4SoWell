@@ -12,7 +12,24 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-	
+
+<build>
+    <plugins>
+        
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+        		<execution>
+		            <configuration>
+		                <mainClass>pl.piomin.services.transaction.TransactionApp</mainClass>
+		            </configuration>
+		        </execution>
+    		</executions>
+        </plugin>
+        
+    </plugins>
+</build>	
 
 	<dependencies>
 		<!--<dependency>
